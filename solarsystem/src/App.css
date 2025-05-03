@@ -11,3 +11,14 @@
   .animate-spin-slow {
     animation: spin-slow 60s linear infinite;
   }
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* Prevent scrolling */
+    height: 100%; /* Ensure the body fills the viewport */
+  }
+  
+  #root {
+    height: 100%; /* Ensure the root element fills the viewport */
+  }
