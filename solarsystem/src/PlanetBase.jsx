@@ -1,16 +1,19 @@
 import React, { useRef, useEffect } from 'react';
 import Spline from '@splinetool/react-spline';
 
-const Mercury = () => {
+// This is a template for when you want to add more planets
+// You can create Venus.jsx, Earth.jsx, etc. based on this component
+
+const PlanetBase = ({ splineSceneUrl, rotationSpeed = 0.1 }) => {
   const containerRef = useRef(null);
   
-  // Handle rotation animation for Mercury
+  // Handle rotation animation for the planet
   useEffect(() => {
     let animationId;
     const rotateElement = () => {
       if (containerRef.current) {
         const currentRotation = parseFloat(containerRef.current.style.getPropertyValue('--rotation') || '0');
-        const newRotation = currentRotation + 0.2; // Mercury rotates faster than the Sun
+        const newRotation = currentRotation + rotationSpeed;
         containerRef.current.style.setProperty('--rotation', newRotation);
       }
       animationId = requestAnimationFrame(rotateElement);
@@ -18,7 +21,7 @@ const Mercury = () => {
     
     animationId = requestAnimationFrame(rotateElement);
     return () => cancelAnimationFrame(animationId);
-  }, []);
+  }, [rotationSpeed]);
 
   return (
     <div 
@@ -29,11 +32,11 @@ const Mercury = () => {
       }}
     >
       <Spline
-        scene="https://prod.spline.design/JUZJ0O1vfP20cwkR/scene.splinecode"
+        scene={splineSceneUrl}
         className="w-full h-full"
       />
     </div>
   );
 };
 
-export default Mercury;
+export default PlanetBase;
