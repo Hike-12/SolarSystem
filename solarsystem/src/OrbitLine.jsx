@@ -1,13 +1,14 @@
 import React from 'react';
 import { Line } from '@react-three/drei';
 
-const OrbitLine = ({ radius, color = '#444444', segments = 128 }) => {
-  // Generate points for a circle
+const OrbitLine = ({ radius, color = '#444444', segments = 128, eccentricity = 0.2 }) => {
+  // Generate points for an elliptical orbit to match Mercury's path
   const points = [];
   for (let i = 0; i <= segments; i++) {
-    const angle = (i / segments) * Math.PI * 2;
-    const x = radius * Math.cos(angle);
-    const z = radius * Math.sin(angle);
+    const theta = (i / segments) * Math.PI * 2;
+    const distance = radius * (1 - eccentricity * Math.cos(theta));
+    const x = distance * Math.cos(theta);
+    const z = distance * Math.sin(theta);
     points.push([x, 0, z]);
   }
 
