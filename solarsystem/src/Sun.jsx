@@ -1,38 +1,64 @@
-import React, { useRef, useEffect } from 'react';
-import Spline from '@splinetool/react-spline';
+import React, { useRef } from 'react';
+import { useFrame } from '@react-three/fiber';
+import { Sphere, useTexture } from '@react-three/drei';
 
-const Sun = () => {
-  const containerRef = useRef(null);
+const Sun = ({ position = [0, 0, 0], size = 2 }) => {
+  const sunRef = useRef();
   
-  // Handle rotation animation for the Sun
-  useEffect(() => {
-    let animationId;
-    const rotateElement = () => {
-      if (containerRef.current) {
-        const currentRotation = parseFloat(containerRef.current.style.getPropertyValue('--rotation') || '0');
-        const newRotation = currentRotation + 0.05;
-        containerRef.current.style.setProperty('--rotation', newRotation);
-      }
-      animationId = requestAnimationFrame(rotateElement);
-    };
-    
-    animationId = requestAnimationFrame(rotateElement);
-    return () => cancelAnimationFrame(animationId);
-  }, []);
+  // Load sun textures from the public folder
+  const sunTextures = useTexture({
+    map: '/textures/sun.jpg',
+    normalMap: '/textures/sun-normalize.jpeg',
+    emissiveMap: '/textures/sun-emissive.jpg' // Add the emissive texture
+  });
+  
+  // Sun rotation animation with pulsing effect
+  useFrame(({ clock }) => {
+    if (sunRef.current) {
+      sunRef.current.rotation.y += 0.002; // Slow rotation
+      
+      // Create subtle pulsing effect for emissive intensity
+      const pulse = Math.sin(clock.getElapsedTime() * 0.5) * 0.2 + 1.3;
+      sunRef.current.material.emissiveIntensity = pulse;
+    }
+  });
 
   return (
-    <div 
-      ref={containerRef}
-      className="w-full h-full"
-      style={{
-        transform: 'rotate(calc(var(--rotation, 0) * 1deg))',
-      }}
-    >
-      <Spline
-        scene="https://prod.spline.design/9lCLlZLnHCcxz4Lg/scene.splinecode"
-        className="w-full h-full"
-      />
-    </div>
+    <group position={position}>
+      {/* Sun glow effect - increased intensity */}
+      <pointLight position={[0, 0, 0]} intensity={2.5} color="#FFF9E0" distance={100} />
+      
+      {/* Sun mesh with texture */}
+      <Sphere ref={sunRef} args={[size, 64, 64]}>
+        <meshStandardMaterial 
+          {...sunTextures}
+          // emissive="#ffffff" // Use white for the emissive color to let the texture control the appearance
+          emissiveIntensity={0.1} // Increased from default
+          toneMapped={false} // Prevents tone mapping from dimming the bright sun
+          normalScale={[0.05, 0.05]}
+          roughness={0.6}
+          metalness={0.3}
+        />
+      </Sphere>
+      
+      {/* Additional outer glow effect - increased opacity */}
+      <Sphere args={[size * 1.2, 32, 32]}>
+        <meshBasicMaterial 
+          color="#FF4500" 
+          transparent={true} 
+          opacity={0.2} // Increased from 0.15
+        />
+      </Sphere>
+      
+      {/* Inner corona for extra detail */}
+      <Sphere args={[size * 1.05, 32, 32]}>
+        <meshBasicMaterial 
+          color="#FFF9E0" 
+          transparent={true} 
+          opacity={0.3}
+        />
+      </Sphere>
+    </group>
   );
 };
 

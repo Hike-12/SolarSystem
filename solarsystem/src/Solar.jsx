@@ -1,98 +1,71 @@
-import React, { useRef, useState, useEffect } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
+import React, { useRef, useState } from 'react';
+import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Stars } from '@react-three/drei';
 import Sun from './Sun';
-import Mercury from './Mercury';
+import Planet from './Planet';
 import OrbitLine from './OrbitLine';
-
-// Component to handle Mercury's orbit calculations
-const MercuryOrbit = ({ orbitRadius = 5, orbitSpeed = 0.3, setPosition }) => {
-  const orbitRef = useRef();
-  
-  useFrame(({ clock }) => {
-    const t = clock.getElapsedTime();
-    const x = orbitRadius * Math.cos(t * orbitSpeed);
-    const z = orbitRadius * Math.sin(t * orbitSpeed);
-    
-    // Update position for the Mercury Spline component
-    setPosition({ x, y: 0, z });
-  });
-
-  return null;
-};
+// import mercuryTexture from '/src/textures/mercury.jpg';
 
 const Solar = () => {
-  const [mercuryPosition, setMercuryPosition] = useState({ x: 5, y: 0, z: 0 });
-  
-  // Track window size for responsive positioning
-  const [windowSize, setWindowSize] = useState({
-    width: typeof window !== 'undefined' ? window.innerWidth : 0,
-    height: typeof window !== 'undefined' ? window.innerHeight : 0,
-  });
-
-  // Update dimensions on window resize
-  useEffect(() => {
-    const handleResize = () => {
-      setWindowSize({
-        width: window.innerWidth,
-        height: window.innerHeight,
-      });
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  // Calculate center position for reference
-  const centerX = windowSize.width / 2;
-  const centerY = windowSize.height / 2;
-
-  // Conversion factor from 3D space units to pixels
-  // Adjust this value to change the scale of orbits on screen
-  const scaleFactor = 50;
+  // Configuration for planets - will be useful when adding more planets
+  const planets = [
+    {
+      name: 'Mercury',
+      distance: 5,
+      size: 0.4,
+      rotationSpeed: 0.5,
+      orbitSpeed: 0.3,
+      // textureMap: mercuryTexture,
+      color: '#A9A9A9',
+    }
+  ];
 
   return (
-    <div className="relative w-full h-screen overflow-hidden">
-      {/* 3D Scene for stars and orbit calculations */}
+    <div className="relative w-full h-screen">
       <Canvas
+        camera={{ position: [0, 15, 25], fov: 50 }}
         className="absolute inset-0 z-0"
-        camera={{ position: [0, 0, 18], fov: 50 }}
       >
         <color attach="background" args={['#030718']} />
+        
+        {/* Ambient light for overall scene visibility */}
         <ambientLight intensity={0.5} />
+
+        <hemisphereLight skyColor="#ffffff" groundColor="#000033" intensity={0.7} />
+        
+        {/* Main directional light to simulate sunlight */}
+        <pointLight position={[0, 0, 0]} intensity={2} color="#FFF9E0" />
+        
+        {/* Background stars */}
         <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
-        <OrbitLine radius={5} color="#444444" />
-        <MercuryOrbit orbitRadius={5} orbitSpeed={0.3} setPosition={setMercuryPosition} />
-        <OrbitControls enablePan={false} enableZoom={true} />
+        
+        {/* Sun at the center */}
+        <Sun position={[0, 0, 0]} size={2} />
+        {/* Add this near the planets */}
+        <directionalLight position={[10, 15, 5]} intensity={0.5} color="#fff" />
+        {/* Planets and their orbits */}
+        {planets.map((planet) => (
+          <React.Fragment key={planet.name}>
+            <OrbitLine radius={planet.distance} />
+            <Planet
+              name={planet.name}
+              orbitRadius={planet.distance}
+              size={planet.size}
+              rotationSpeed={planet.rotationSpeed}
+              orbitSpeed={planet.orbitSpeed}
+              textureMap={planet.textureMap}
+            />
+          </React.Fragment>
+        ))}
+        
+        {/* Camera controls */}
+        <OrbitControls 
+          enablePan={true} 
+          enableZoom={true} 
+          minDistance={5}
+          maxDistance={50}
+        />
       </Canvas>
-
-      {/* SUN - centered */}
-      <div
-        className="absolute z-10 pointer-events-none"
-        style={{
-          left: `${centerX}px`,
-          top: `${centerY}px`,
-          transform: 'translate(-50%, -50%)',
-          width: '200px',
-          height: '200px',
-        }}
-      >
-        <Sun />
-      </div>
-
-      {/* MERCURY - positioned based on orbit calculations */}
-      <div 
-        className="absolute z-10 pointer-events-none"
-        style={{
-          left: `${centerX + mercuryPosition.x * scaleFactor}px`,
-          top: `${centerY + mercuryPosition.z * scaleFactor}px`,
-          transform: 'translate(-50%, -50%)',
-          width: '40px',
-          height: '40px',
-        }}
-      >
-        <Mercury />
-      </div>
     </div>
   );
 };
