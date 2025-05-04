@@ -5,6 +5,7 @@ import Sun from './Sun';
 import Mercury from './Mercury';
 import OrbitLine from './OrbitLine';
 import Starfield from './Starfield';
+import Venus from './Venus';
 
 const Solar = () => {
   return (
@@ -49,6 +50,10 @@ const Solar = () => {
         {/* Mercury and its orbit */}
         <OrbitLine radius={5} color="#6A6A92" eccentricity={0.2}/>
         <Mercury orbitRadius={5} />
+
+        {/* Venus and its orbit */}
+        <OrbitLine radius={8} color="#E89D65" eccentricity={0.1}/>
+        <Venus orbitRadius={8} />
 
         {/* Camera controls */}
         <OrbitControls
