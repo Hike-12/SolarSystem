@@ -97,7 +97,8 @@ const Venus = ({ orbitRadius = 8 }) => {
   const atmosphereTexture = useTexture('/textures/venus-atmosphere.jpg');
 
   // Venus's physical properties
-  const size = 0.6;
+  const size = 0.95; // Venus is slightly smaller than Earth
+  const atmosphereSize = size * 1.03; // Atmosphere is slightly larger
   const rotationSpeed = -0.1; // Venus has retrograde rotation
   const orbitSpeed = 0.2;
   const eccentricity = 0.1;
