@@ -7,6 +7,7 @@ import OrbitLine from './OrbitLine';
 import Starfield from './Starfield';
 import Venus from './Venus';
 import Earth from './Earth';
+import Mars from './Mars';
 
 const Solar = () => {
   return (
@@ -59,6 +60,9 @@ const Solar = () => {
         {/* Earth and its orbit */}
         <OrbitLine radius={12} color="#4A99E9" eccentricity={0.017}/>
         <Earth orbitRadius={12} />
+
+        <OrbitLine radius={15} color="#E27B58" eccentricity={0.09}/>
+        <Mars orbitRadius={15} />
 
         {/* Camera controls */}
         <OrbitControls
