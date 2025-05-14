@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Sphere, useTexture } from '@react-three/drei';
 
-const Sun = ({ position = [0, 0, 0], size = 3 }) => {
+const Sun = ({ position = [0, 0, 0], size = 2 }) => {
   const sunRef = useRef();
   
   // Load sun textures from the public folder

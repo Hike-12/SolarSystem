@@ -9,6 +9,7 @@ import Venus from './Venus';
 import Earth from './Earth';
 import Mars from './Mars';
 import Jupiter from './Jupiter';
+import AsteroidBelt from './AsteroidBelt';
 
 const Solar = () => {
   return (
@@ -48,7 +49,7 @@ const Solar = () => {
         <Starfield />
 
         {/* Sun at the center */}
-        <Sun position={[0, 0, 0]} size={2} />
+        <Sun position={[0, 0, 0]} size={5} />
 
         {/* Mercury and its orbit */}
         <OrbitLine radius={5} color="#6A6A92" eccentricity={0.2}/>
@@ -66,9 +67,12 @@ const Solar = () => {
         <OrbitLine radius={15} color="#E27B58" eccentricity={0.09}/>
         <Mars orbitRadius={15} />
 
+        {/* Asteroid belt between Mars and Jupiter */}
+        <AsteroidBelt innerRadius={20} outerRadius={30} count={2000} />
+
         {/* Jupiter and its orbit */}
-        <OrbitLine radius={25} color="#E8C275" eccentricity={0.049}/>
-        <Jupiter orbitRadius={25} />
+        <OrbitLine radius={35} color="#E8C275" eccentricity={0.049}/>
+        <Jupiter orbitRadius={35} />
 
         {/* Camera controls */}
         <OrbitControls
