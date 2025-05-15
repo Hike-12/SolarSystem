@@ -8,7 +8,7 @@ const MarsShaderMaterial = {
   uniforms: {
     dayTexture: { value: null },
     sunDirection: { value: new THREE.Vector3(1, 0, 0) },
-    nightColor: { value: new THREE.Color(0x281010) }, // Slightly reddish dark color for night side
+    nightColor: { value: new THREE.Color(0x1a1005) }, // Slightly reddish dark color for night side
   },
   vertexShader: `
     varying vec3 vWorldNormal;
