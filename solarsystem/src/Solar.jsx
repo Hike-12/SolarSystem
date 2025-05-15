@@ -111,7 +111,7 @@ const Solar = () => {
           enablePan={true}
           enableZoom={true}
           minDistance={17}
-          maxDistance={275}
+          maxDistance={500}
         />
 
       </Canvas>
