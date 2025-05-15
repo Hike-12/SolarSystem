@@ -11,6 +11,7 @@ import Mars from './Mars';
 import Jupiter from './Jupiter';
 import AsteroidBelt from './AsteroidBelt';
 import Saturn from './Saturn';
+import Uranus from './Uranus';
 
 const Solar = () => {
   // State to track orbit lines visibility
@@ -95,6 +96,10 @@ const Solar = () => {
         {/* Saturn and its orbit - conditional rendering */}
         {showOrbitLines && <OrbitLine radius={64} color="#E8B465" eccentricity={0.057}/>}
         <Saturn orbitRadius={64} />
+
+        {/* Uranus and its orbit - conditional rendering */}
+        {showOrbitLines && <OrbitLine radius={76} color="#4FC3C3" eccentricity={0.046}/>}
+        <Uranus orbitRadius={76} />
 
         {/* Camera controls */}
         <OrbitControls
