@@ -216,7 +216,7 @@ const Solar = () => {
     <div className="relative w-full h-screen">
       {/* Toast notification */}
       <Toast 
-        message="Click on any planet to learn more about it!" 
+        message="Click on any planet to learn more about it! You can also mute the audio and toggle orbit lines. Zoom in/out to explore the solar system." 
         visible={showToast} 
         onClose={() => setShowToast(false)} 
       />
