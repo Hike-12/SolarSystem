@@ -52,7 +52,7 @@ const JupiterShaderMaterial = {
   `
 };
 
-const Jupiter = ({ orbitRadius = 25 }) => {
+const Jupiter = ({ orbitRadius = 25,onClick, timeSpeed = 1  }) => {
   const jupiterRef = useRef();
   const orbitRef = useRef();
 
@@ -76,10 +76,10 @@ const Jupiter = ({ orbitRadius = 25 }) => {
   useFrame(({ clock }) => {
     if (jupiterRef.current && orbitRef.current) {
       // Self-rotation
-      jupiterRef.current.rotation.y += rotationSpeed * 0.005;
+      jupiterRef.current.rotation.y += rotationSpeed * 0.005 * timeSpeed;
       
       // Orbit calculations - same pattern as other planets
-      const t = clock.getElapsedTime();
+      const t = clock.getElapsedTime() * timeSpeed;
       const theta = t * orbitSpeed;
       const distance = orbitRadius * (1 - eccentricity * Math.cos(theta));
       const x = distance * Math.cos(theta);
@@ -116,7 +116,11 @@ const Jupiter = ({ orbitRadius = 25 }) => {
   return (
     <group>
       <group ref={orbitRef} position={[orbitRadius, 0, 0]} rotation={[axialTilt, 0, 0]}>
-        <Sphere ref={jupiterRef} args={[size, 128, 64]}>
+        <Sphere ref={jupiterRef} args={[size, 128, 64]}
+        onClick={(e) => {
+            e.stopPropagation();
+            onClick("Jupiter"); // This passes the planet name to the handler
+          }}>
           <jupiterMaterial attach="material" />
         </Sphere>
       </group>

@@ -47,7 +47,7 @@ const EarthShaderMaterial = {
   `
 };
 
-const Earth = ({ orbitRadius = 12 }) => {
+const Earth = ({ orbitRadius = 12,onClick, timeSpeed = 1  }) => {
   const earthRef = useRef();
   const orbitRef = useRef();
 
@@ -77,10 +77,10 @@ const Earth = ({ orbitRadius = 12 }) => {
   useFrame(({ clock }) => {
     if (earthRef.current && orbitRef.current) {
       // Self-rotation
-      earthRef.current.rotation.y += rotationSpeed * 0.005;
+      earthRef.current.rotation.y += rotationSpeed * 0.005 * timeSpeed;
       
       // Orbit calculations - same as Mercury/Venus
-      const t = clock.getElapsedTime();
+      const t = clock.getElapsedTime() * timeSpeed;
       const theta = t * orbitSpeed;
       const distance = orbitRadius * (1 - eccentricity * Math.cos(theta));
       const x = distance * Math.cos(theta);
@@ -119,7 +119,11 @@ const Earth = ({ orbitRadius = 12 }) => {
     <group>
       <group ref={orbitRef} position={[orbitRadius, 0, 0]} rotation={[axialTilt, 0, 0]}>
         {/* Earth */}
-        <Sphere ref={earthRef} args={[size, 64, 32]}>
+        <Sphere ref={earthRef} args={[size, 64, 32]}
+        onClick={(e) => {
+            e.stopPropagation();
+            onClick("Earth"); // This passes the planet name to the handler
+          }}>
           <earthMaterial attach="material" />
         </Sphere>
       </group>

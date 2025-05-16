@@ -48,7 +48,7 @@ const MercuryShaderMaterial = {
 `
 };
 
-const Mercury = ({ orbitRadius = 5 }) => {
+const Mercury = ({ orbitRadius = 5,onClick, timeSpeed = 1  }) => {
   const mercuryRef = useRef();
   const orbitRef = useRef();
 
@@ -61,9 +61,9 @@ const Mercury = ({ orbitRadius = 5 }) => {
 
   useFrame(({ clock }) => {
     if (mercuryRef.current && orbitRef.current) {
-      mercuryRef.current.rotation.y += rotationSpeed * 0.005;
+      mercuryRef.current.rotation.y += rotationSpeed * 0.005 * timeSpeed;
 
-      const t = clock.getElapsedTime();
+      const t = clock.getElapsedTime() * timeSpeed;
       const theta = t * orbitSpeed;
       const distance = orbitRadius * (1 - eccentricity * Math.cos(theta));
       const x = distance * Math.cos(theta);
@@ -97,7 +97,11 @@ const Mercury = ({ orbitRadius = 5 }) => {
   return (
     <group>
       <group ref={orbitRef} position={[orbitRadius, 0, 0]}>
-        <Sphere ref={mercuryRef} args={[size, 64, 32]}>
+        <Sphere ref={mercuryRef} args={[size, 64, 32]}
+        onClick={(e) => {
+            e.stopPropagation();
+            onClick("Mercury"); // This passes the planet name to the handler
+          }}>
           {/* Ensure the material is correctly applied */}
           <mercuryMaterial attach="material" key={MercuryMaterial.key} />
         </Sphere>

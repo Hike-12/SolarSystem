@@ -48,7 +48,7 @@ const MarsShaderMaterial = {
   `
 };
 
-const Mars = ({ orbitRadius = 15 }) => {
+const Mars = ({ orbitRadius = 15,onClick, timeSpeed = 1  }) => {
   const marsRef = useRef();
   const orbitRef = useRef();
 
@@ -72,10 +72,10 @@ const Mars = ({ orbitRadius = 15 }) => {
   useFrame(({ clock }) => {
     if (marsRef.current && orbitRef.current) {
       // Self-rotation
-      marsRef.current.rotation.y += rotationSpeed * 0.005;
+      marsRef.current.rotation.y += rotationSpeed * 0.005 * timeSpeed;
       
       // Orbit calculations - same pattern as other planets
-      const t = clock.getElapsedTime();
+      const t = clock.getElapsedTime() * timeSpeed;
       const theta = t * orbitSpeed;
       const distance = orbitRadius * (1 - eccentricity * Math.cos(theta));
       const x = distance * Math.cos(theta);
@@ -112,7 +112,11 @@ const Mars = ({ orbitRadius = 15 }) => {
   return (
     <group>
       <group ref={orbitRef} position={[orbitRadius, 0, 0]} rotation={[axialTilt, 0, 0]}>
-        <Sphere ref={marsRef} args={[size, 64, 32]}>
+        <Sphere ref={marsRef} args={[size, 64, 32]}
+        onClick={(e) => {
+            e.stopPropagation();
+            onClick("Mars"); // This passes the planet name to the handler
+          }}>
           <marsMaterial attach="material" />
         </Sphere>
       </group>

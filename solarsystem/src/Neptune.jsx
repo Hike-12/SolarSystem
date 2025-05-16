@@ -90,7 +90,7 @@ const NeptuneRingShader = {
   `
 };
 
-const Neptune = ({ orbitRadius = 88 }) => {
+const Neptune = ({ orbitRadius = 88 ,onClick, timeSpeed = 1 }) => {
   const neptuneRef = useRef();
   const ringRef = useRef();
   const orbitRef = useRef();
@@ -117,10 +117,10 @@ const Neptune = ({ orbitRadius = 88 }) => {
   useFrame(({ clock }) => {
     if (neptuneRef.current && ringRef.current && orbitRef.current) {
       // Self-rotation
-      neptuneRef.current.rotation.y += rotationSpeed * 0.005;
+      neptuneRef.current.rotation.y += rotationSpeed * 0.005 * timeSpeed;
       
       // Orbit calculations - same pattern as other planets
-      const t = clock.getElapsedTime();
+      const t = clock.getElapsedTime() * timeSpeed;
       const theta = t * orbitSpeed;
       const distance = orbitRadius * (1 - eccentricity * Math.cos(theta));
       const x = distance * Math.cos(theta);
@@ -171,7 +171,11 @@ const Neptune = ({ orbitRadius = 88 }) => {
     <group>
       <group ref={orbitRef} position={[orbitRadius, 0, 0]} rotation={[axialTilt, 0, 0]}>
         {/* Neptune planet body */}
-        <Sphere ref={neptuneRef} args={[size, 128, 64]}>
+        <Sphere ref={neptuneRef} args={[size, 128, 64]}
+        onClick={(e) => {
+            e.stopPropagation();
+            onClick("Neptune"); // This passes the planet name to the handler
+          }}>
           <neptuneMaterial attach="material" />
         </Sphere>
         

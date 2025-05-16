@@ -90,7 +90,7 @@ const UranusRingShader = {
   `
 };
 
-const Uranus = ({ orbitRadius = 76 }) => {
+const Uranus = ({ orbitRadius = 76,onClick, timeSpeed = 1 }) => {
   const uranusRef = useRef();
   const ringRef = useRef();
   const orbitRef = useRef();
@@ -114,13 +114,13 @@ const Uranus = ({ orbitRadius = 76 }) => {
   }
 
   // Animation for rotation and orbit
-  useFrame(({ clock }) => {
+  useFrame(({ clock  }) => {
     if (uranusRef.current && ringRef.current && orbitRef.current) {
       // Self-rotation (Uranus rotates "sideways")
-      uranusRef.current.rotation.y += rotationSpeed * 0.005;
+      uranusRef.current.rotation.y += rotationSpeed * 0.005 * timeSpeed;
       
       // Orbit calculations - same pattern as other planets
-      const t = clock.getElapsedTime();
+      const t = clock.getElapsedTime() * timeSpeed;
       const theta = t * orbitSpeed;
       const distance = orbitRadius * (1 - eccentricity * Math.cos(theta));
       const x = distance * Math.cos(theta);
@@ -172,7 +172,11 @@ class UranusRingMaterial extends THREE.ShaderMaterial {
     <group>
       <group ref={orbitRef} position={[orbitRadius, 0, 0]} rotation={[axialTilt, 0, 0]}>
         {/* Uranus planet body */}
-        <Sphere ref={uranusRef} args={[size, 128, 64]}>
+        <Sphere ref={uranusRef} args={[size, 128, 64]}
+        onClick={(e) => {
+            e.stopPropagation();
+            onClick("Uranus"); // This passes the planet name to the handler
+          }}>
           <uranusMaterial attach="material" />
         </Sphere>
         

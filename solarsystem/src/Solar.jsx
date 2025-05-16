@@ -1,11 +1,20 @@
-import { OrbitControls, Stars, Shadow } from '@react-three/drei';
-import React, { useState, Suspense, lazy, useEffect } from 'react';
-import { Canvas } from '@react-three/fiber';
+import { OrbitControls } from '@react-three/drei';
+import React, { useState, Suspense, lazy, useEffect, useRef } from 'react';
+import { Canvas, useThree, useFrame } from '@react-three/fiber';
 import { useProgress, Html } from '@react-three/drei';
+import { gsap } from 'gsap';
+import { motion, AnimatePresence } from 'framer-motion';
+
+// Data
+import { planetData, cameraPositions } from './planetData';
 
 // Only import essential components directly
 import Sun from './Sun';
 import Starfield from './Starfield';
+import RocketLoader from './RocketLoader';
+import PlanetInfo from './PlanetInfo';
+import Moon from './Moon';
+
 
 // Lazy load the rest
 const Mercury = lazy(() => import('./Mercury'));
@@ -19,11 +28,147 @@ const Uranus = lazy(() => import('./Uranus'));
 const Neptune = lazy(() => import('./Neptune'));
 const OrbitLine = lazy(() => import('./OrbitLine'));
 
-import RocketLoader from './RocketLoader';
+// Camera Controls Component
+const CameraController = ({ target, enabled }) => {
+  const { camera } = useThree();
+  
+  useEffect(() => {
+    if (!enabled || !target) return;
+    
+    const targetPosition = cameraPositions[target] || cameraPositions.Overview;
+    
+    gsap.to(camera.position, {
+      duration: 2,
+      x: targetPosition[0],
+      y: targetPosition[1],
+      z: targetPosition[2],
+      onUpdate: () => {
+        if (target === 'Overview') {
+          camera.lookAt(0, 0, 0);
+        }
+      },
+      onComplete: () => {
+        camera.lookAt(0, 0, 0);
+      }
+    });
+  }, [target, camera, enabled]);
+  
+  return null;
+};
+
+// Audio Manager Component
+const AudioManager = ({ muted }) => {
+  const audioRef = useRef(null);
+  
+  useEffect(() => {
+    // Create audio element
+    const audio = new Audio('/sounds/space-ambient.mp3');
+    audio.loop = true;
+    audio.volume = 0.3;
+    audioRef.current = audio;
+    
+    // Add click handler to play audio (browser policy)
+    const handleInteraction = () => {
+      audio.play().catch(() => {
+        // Autoplay was prevented, that's fine
+      });
+      document.removeEventListener('click', handleInteraction);
+    };
+    
+    document.addEventListener('click', handleInteraction);
+    
+    return () => {
+      audio.pause();
+      document.removeEventListener('click', handleInteraction);
+    };
+  }, []);
+  
+  // Handle mute/unmute
+  useEffect(() => {
+    if (!audioRef.current) return;
+    
+    if (muted) {
+      audioRef.current.pause();
+    } else {
+      audioRef.current.play().catch(() => {
+        // Autoplay was prevented, that's fine
+      });
+    }
+  }, [muted]);
+  
+  return null;
+};
+
+// Toast Notification Component
+const Toast = ({ message, visible, onClose }) => {
+  useEffect(() => {
+    if (visible) {
+      const timer = setTimeout(() => {
+        onClose();
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [visible, onClose]);
+
+  return (
+    <AnimatePresence>
+      {visible && (
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          transition={{ duration: 0.3 }}
+          className="fixed top-20 left-1/2 transform -translate-x-1/2 bg-cyan-900/80 backdrop-blur-md 
+                    text-white px-6 py-3 rounded-lg shadow-lg z-50 flex items-center gap-2"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-cyan-300">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="16" x2="12" y2="12"></line>
+            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+          </svg>
+          {message}
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+};
 
 const Solar = () => {
+  // Base states
   const [showOrbitLines, setShowOrbitLines] = useState(true);
   const [loadStage, setLoadStage] = useState(0);
+  
+  // Feature states
+  const [selectedPlanet, setSelectedPlanet] = useState(null);
+  const [cameraTarget, setCameraTarget] = useState(null);
+  const [audioMuted, setAudioMuted] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  
+  // Orbit controls ref to disable during camera transitions
+  const orbitControlsRef = useRef();
+  
+  // Handle planet click
+  const handlePlanetClick = (planet) => {
+    setSelectedPlanet(planet);
+    // setCameraTarget(planet);
+  };
+  
+  // Close planet info panel
+  const closePlanetInfo = () => {
+    setSelectedPlanet(null);
+  };
+  
+  // Fly to specific location
+  const flyTo = (target) => {
+    setCameraTarget(target);
+    
+    // If clicking on a planet that's already selected, close the info panel
+    if (selectedPlanet === target) {
+      setSelectedPlanet(null);
+    } else {
+      setSelectedPlanet(target);
+    }
+  };
   
   // Progressive loading of planets
   useEffect(() => {
@@ -32,42 +177,126 @@ const Solar = () => {
     }, 600);
     return () => clearTimeout(timer);
   }, [loadStage]);
-
+  
+  // Show toast after loading is complete
+  useEffect(() => {
+    if (loadStage === 5) {
+      // Wait a bit after loading completes before showing toast
+      const timer = setTimeout(() => {
+        setShowToast(true);
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [loadStage]);
+  
+  // Disable orbit controls during camera transitions
+  useEffect(() => {
+    if (orbitControlsRef.current) {
+      orbitControlsRef.current.enabled = !cameraTarget;
+    }
+  }, [cameraTarget]);
+  
   return (
     <div className="relative w-full h-screen">
+      {/* Toast notification */}
+      <Toast 
+        message="Click on any planet to learn more about it!" 
+        visible={showToast} 
+        onClose={() => setShowToast(false)} 
+      />
+      
+      {/* Orbit lines toggle button */}
       <button 
         onClick={() => setShowOrbitLines(!showOrbitLines)}
-        className="absolute top-4 right-4 z-10 bg-slate-800 text-white px-4 py-2 rounded-md opacity-80 hover:opacity-100"
+        className="absolute top-4 right-4 z-10 bg-slate-800/90 hover:bg-slate-700 text-white px-4 py-2 rounded-md transition-colors backdrop-blur-sm"
       >
         {showOrbitLines ? 'Hide Orbit Lines' : 'Show Orbit Lines'}
       </button>
-
+      
+      {/* Planet quick navigation
+      <div className="absolute right-5 bottom-5 flex flex-col gap-2 z-10">
+        {Object.keys(planetData).map(planet => (
+          <button 
+            key={planet}
+            className={`bg-slate-800/90 hover:bg-slate-700 px-4 py-2 rounded-md text-sm text-white transition-colors backdrop-blur-sm ${selectedPlanet === planet ? 'bg-cyan-700' : ''}`}
+            onClick={() => flyTo(planet)}
+          >
+            {planet}
+          </button>
+        ))}
+      </div> */}
+      
+      {/* Audio control button */}
+      <button 
+        className={`absolute bottom-5 left-5 bg-slate-800/90 hover:bg-slate-700 w-10 h-10 rounded-full flex items-center justify-center text-white z-10 backdrop-blur-sm ${audioMuted ? 'bg-red-700/80' : ''}`}
+        onClick={() => setAudioMuted(!audioMuted)}
+      >
+        {audioMuted ? (
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="1" y1="1" x2="23" y2="23"></line>
+            <path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"></path>
+            <path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2a7 7 0 0 1-.11 1.23"></path>
+            <line x1="12" y1="19" x2="12" y2="23"></line>
+            <line x1="8" y1="23" x2="16" y2="23"></line>
+          </svg>
+        ) : (
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
+            <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
+          </svg>
+        )}
+      </button>
+      
+      {/* Audio manager (out of sight) */}
+      <AudioManager muted={audioMuted} />
+      
+      {/* Planet info panel */}
+      <AnimatePresence>
+        {selectedPlanet && (
+          <PlanetInfo planet={selectedPlanet} onClose={closePlanetInfo} />
+        )}
+      </AnimatePresence>
+      
+      {/* 3D Canvas */}
       <Canvas
-        camera={{ position: [0, 10, 15], fov: 50 }}
+        camera={{ position: [200, 50, 120], fov: 50 }}
         className="absolute inset-0 z-0"
         shadows
         gl={{ 
-          antialias: true, // Start with antialiasing off for faster loading
+          antialias: true,
           powerPreference: "high-performance" 
         }}
       >
         <color attach="background" args={['#030718']} />
         <ambientLight intensity={0.5} />
         
+        {/* Camera controller */}
+        <CameraController target={cameraTarget} enabled={!!cameraTarget} />
+        
         {/* Essential components load first */}
         <Suspense fallback={<RocketLoader />}>
           <Starfield />
-          <Sun position={[0, 0, 0]} size={4} />
+          <Sun 
+            position={[0, 0, 0]} 
+            size={4} 
+            onClick= { handlePlanetClick }
+          />
           
           {/* Inner planets load next */}
           {loadStage >= 1 && (
             <>
               <Suspense fallback={null}>
                 {showOrbitLines && <OrbitLine radius={8} color="#6A6A92" eccentricity={0.2}/>}
-                <Mercury orbitRadius={8} />
+                <Mercury 
+                  orbitRadius={8} 
+                  onClick={handlePlanetClick}
+                />
                 
                 {showOrbitLines && <OrbitLine radius={13} color="#E89D65" eccentricity={0.1}/>}
-                <Venus orbitRadius={13} />
+                <Venus 
+                  orbitRadius={13} 
+                  onClick={handlePlanetClick}
+                />
               </Suspense>
             </>
           )}
@@ -76,17 +305,27 @@ const Solar = () => {
           {loadStage >= 2 && (
             <Suspense fallback={null}>
               {showOrbitLines && <OrbitLine radius={18} color="#4A99E9" eccentricity={0.017}/>}
-              <Earth orbitRadius={18} />
+              <Earth 
+                orbitRadius={18} 
+                onClick={handlePlanetClick}
+              />
               
               {showOrbitLines && <OrbitLine radius={26} color="#E27B58" eccentricity={0.09}/>}
-              <Mars orbitRadius={26} />
+              <Mars 
+                orbitRadius={26} 
+                onClick={handlePlanetClick}
+              />
             </Suspense>
           )}
           
           {/* Asteroid belt - load after Mars */}
           {loadStage >= 3 && (
             <Suspense fallback={null}>
-              <AsteroidBelt innerRadius={32} outerRadius={42} count={800} />
+              <AsteroidBelt 
+                innerRadius={32} 
+                outerRadius={42} 
+                count={800}
+              />
             </Suspense>
           )}
           
@@ -94,10 +333,16 @@ const Solar = () => {
           {loadStage >= 4 && (
             <Suspense fallback={null}>
               {showOrbitLines && <OrbitLine radius={52} color="#E8C275" eccentricity={0.049}/>}
-              <Jupiter orbitRadius={52} />
+              <Jupiter 
+                orbitRadius={52} 
+                onClick={handlePlanetClick}
+              />
               
               {showOrbitLines && <OrbitLine radius={64} color="#E8B465" eccentricity={0.057}/>}
-              <Saturn orbitRadius={64} />
+              <Saturn 
+                orbitRadius={64} 
+                onClick={handlePlanetClick}
+              />
             </Suspense>
           )}
           
@@ -105,14 +350,21 @@ const Solar = () => {
           {loadStage >= 5 && (
             <Suspense fallback={null}>
               {showOrbitLines && <OrbitLine radius={76} color="#4FC3C3" eccentricity={0.046}/>}
-              <Uranus orbitRadius={76} />
+              <Uranus 
+                orbitRadius={76} 
+                onClick={handlePlanetClick}
+              />
               
               {showOrbitLines && <OrbitLine radius={88} color="#3066BE" eccentricity={0.009}/>}
-              <Neptune orbitRadius={88} />
+              <Neptune 
+                orbitRadius={88} 
+                onClick={handlePlanetClick}
+              />
             </Suspense>
           )}
           
           <OrbitControls
+            ref={orbitControlsRef}
             enablePan={true}
             enableZoom={true}
             minDistance={17}
@@ -125,110 +377,3 @@ const Solar = () => {
 };
 
 export default Solar;
-
-// const Solar = () => {
-//   // State to track orbit lines visibility
-//   const [showOrbitLines, setShowOrbitLines] = useState(true);
-
-//   // Toggle function
-//   const toggleOrbitLines = () => {
-//     setShowOrbitLines(!showOrbitLines);
-//   };
-
-//   return (
-//     <div className="relative w-full h-screen">
-//       {/* Toggle button - positioned in the top right corner */}
-//       <button 
-//         onClick={toggleOrbitLines}
-//         className="absolute top-4 right-4 z-10 bg-slate-800 text-white px-4 py-2 rounded-md opacity-80 hover:opacity-100 transition-opacity"
-//         style={{ backdropFilter: 'blur(5px)' }}
-//       >
-//         {showOrbitLines ? 'Hide Orbit Lines' : 'Show Orbit Lines'}
-//       </button>
-
-//       <Canvas
-//         camera={{ position: [0, 10, 15], fov: 50 }}
-//         className="absolute inset-0 z-0"
-//         shadows
-//         gl={{ antialias: true }}
-//       >
-//         <color attach="background" args={['#030718']} />
-
-//         {/* Ambient light for overall scene visibility */}
-//         <ambientLight intensity={0.5} />
-
-//         <hemisphereLight skyColor="#ffffff" groundColor="#000033" intensity={0.5} />
-
-//         {/* Main light source at the center (Sun) */}
-//         <pointLight
-//           position={[0, 0, 0]}
-//           intensity={5.0}
-//           color="#FFF9E0"
-//           distance={60}
-//           castShadow
-//           shadow-mapSize={[2048, 2048]}
-//           shadow-bias={-0.0005}
-//           shadow-radius={3}
-//         />
-//         {/* Add distant light to create contrast */}
-//         <directionalLight
-//           position={[30, 20, 30]}
-//           intensity={0.2}
-//           color="#CCE8FF"
-//           castShadow
-//         />
-//         {/* Background stars */}
-//         <Starfield />
-
-//         {/* Sun at the center */}
-//         <Sun position={[0, 0, 0]} size={4} />
-
-//         {/* Mercury and its orbit - conditional rendering */}
-//         {showOrbitLines && <OrbitLine radius={8} color="#6A6A92" eccentricity={0.2}/>}
-//         <Mercury orbitRadius={8} />
-
-//         {/* Venus and its orbit - conditional rendering */}
-//         {showOrbitLines && <OrbitLine radius={13} color="#E89D65" eccentricity={0.1}/>}
-//         <Venus orbitRadius={13} />
-
-//         {/* Earth and its orbit - conditional rendering */}
-//         {showOrbitLines && <OrbitLine radius={18} color="#4A99E9" eccentricity={0.017}/>}
-//         <Earth orbitRadius={18} />
-
-//         {/* Mars and its orbit - conditional rendering */}
-//         {showOrbitLines && <OrbitLine radius={26} color="#E27B58" eccentricity={0.09}/>}
-//         <Mars orbitRadius={26} />
-
-//         {/* Asteroid belt between Mars and Jupiter */}
-//         <AsteroidBelt innerRadius={32} outerRadius={42} count={1500} />
-
-//         {/* Jupiter and its orbit - conditional rendering */}
-//         {showOrbitLines && <OrbitLine radius={52} color="#E8C275" eccentricity={0.049}/>}
-//         <Jupiter orbitRadius={52} />
-
-//         {/* Saturn and its orbit - conditional rendering */}
-//         {showOrbitLines && <OrbitLine radius={64} color="#E8B465" eccentricity={0.057}/>}
-//         <Saturn orbitRadius={64} />
-
-//         {/* Uranus and its orbit - conditional rendering */}
-//         {showOrbitLines && <OrbitLine radius={76} color="#4FC3C3" eccentricity={0.046}/>}
-//         <Uranus orbitRadius={76} />
-
-//         {/* Neptune and its orbit - conditional rendering */}
-//         {showOrbitLines && <OrbitLine radius={88} color="#3066BE" eccentricity={0.009}/>}
-//         <Neptune orbitRadius={88} />
-
-//         {/* Camera controls */}
-//         <OrbitControls
-//           enablePan={true}
-//           enableZoom={true}
-//           minDistance={17}
-//           maxDistance={500}
-//         />
-
-//       </Canvas>
-//     </div>
-//   );
-// };
-
-// export default Solar;

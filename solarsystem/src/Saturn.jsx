@@ -97,7 +97,7 @@ const SaturnRingMaterial = {
   `
 };
 
-const Saturn = ({ orbitRadius = 64 }) => {
+const Saturn = ({ orbitRadius = 64,onClick, timeSpeed = 1  }) => {
   const saturnRef = useRef();
   const ringRef = useRef();
   const orbitRef = useRef();
@@ -130,10 +130,10 @@ const Saturn = ({ orbitRadius = 64 }) => {
   useFrame(({ clock }) => {
     if (saturnRef.current && ringRef.current && orbitRef.current) {
       // Self-rotation
-      saturnRef.current.rotation.y += rotationSpeed * 0.005;
+      saturnRef.current.rotation.y += rotationSpeed * 0.005 * timeSpeed;
       
       // Orbit calculations - same pattern as other planets
-      const t = clock.getElapsedTime();
+      const t = clock.getElapsedTime() * timeSpeed;
       const theta = t * orbitSpeed;
       const distance = orbitRadius * (1 - eccentricity * Math.cos(theta));
       const x = distance * Math.cos(theta);
@@ -185,7 +185,11 @@ const Saturn = ({ orbitRadius = 64 }) => {
     <group>
       <group ref={orbitRef} position={[orbitRadius, 0, 0]} rotation={[axialTilt, 0, 0]}>
         {/* Saturn planet body */}
-        <Sphere ref={saturnRef} args={[size, 128, 64]}>
+        <Sphere ref={saturnRef} args={[size, 128, 64]}
+        onClick={(e) => {
+            e.stopPropagation();
+            onClick("Saturn"); // This passes the planet name to the handler
+          }}>
           <saturnMaterial attach="material" />
         </Sphere>
         

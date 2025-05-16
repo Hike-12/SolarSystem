@@ -87,7 +87,7 @@ const VenusAtmosphereShaderMaterial = {
   `
 };
 
-const Venus = ({ orbitRadius = 8 }) => {
+const Venus = ({ orbitRadius = 8,onClick, timeSpeed = 1 }) => {
   const venusRef = useRef();
   const atmosphereRef = useRef();
   const orbitRef = useRef();
@@ -113,13 +113,13 @@ const Venus = ({ orbitRadius = 8 }) => {
   useFrame(({ clock }) => {
     if (venusRef.current && atmosphereRef.current && orbitRef.current) {
       // Self-rotation
-      venusRef.current.rotation.y += rotationSpeed * 0.002;
+      venusRef.current.rotation.y += rotationSpeed * 0.002 * timeSpeed;
       
       // Atmosphere rotation (slightly different)
       atmosphereRef.current.rotation.y += rotationSpeed * 0.001;
       
       // Orbit calculations - same as Mercury
-      const t = clock.getElapsedTime();
+      const t = clock.getElapsedTime() * timeSpeed;
       const theta = t * orbitSpeed;
       const distance = orbitRadius * (1 - eccentricity * Math.cos(theta));
       const x = distance * Math.cos(theta);
@@ -167,7 +167,11 @@ const Venus = ({ orbitRadius = 8 }) => {
     <group>
       <group ref={orbitRef} position={[orbitRadius, 0, 0]}>
         {/* Venus surface */}
-        <Sphere ref={venusRef} args={[size, 64, 32]}>
+        <Sphere ref={venusRef} args={[size, 64, 32]}
+        onClick={(e) => {
+            e.stopPropagation();
+            onClick("Venus"); // This passes the planet name to the handler
+          }}>
           <venusMaterial attach="material" />
         </Sphere>
         

@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Sphere, useTexture } from '@react-three/drei';
 
-const Sun = ({ position = [0, 0, 0], size = 2 }) => {
+const Sun = ({ position = [0, 0, 0], size = 2 ,onClick, timeSpeed = 1 }) => {
   const sunRef = useRef();
   
   // Load sun textures from the public folder
@@ -15,7 +15,7 @@ const Sun = ({ position = [0, 0, 0], size = 2 }) => {
   // Sun rotation animation with pulsing effect
   useFrame(({ clock }) => {
     if (sunRef.current) {
-      sunRef.current.rotation.y += 0.002; // Slow rotation
+      sunRef.current.rotation.y += 0.002 *timeSpeed; // Slow rotation
       
       // Create subtle pulsing effect for emissive intensity
       const pulse = Math.sin(clock.getElapsedTime() * 0.5) * 0.2 + 1.3;
@@ -24,7 +24,10 @@ const Sun = ({ position = [0, 0, 0], size = 2 }) => {
   });
 
   return (
-    <group position={position}>
+    <group position={position} onClick={(e) => {
+            e.stopPropagation();
+            onClick("Sun"); // This passes the planet name to the handler
+          }}>
       {/* Sun glow effect - increased intensity */}
       <pointLight position={[0, 0, 0]} intensity={2.5} color="#FFF9E0" distance={100} />
       
