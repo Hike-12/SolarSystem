@@ -7,7 +7,7 @@ const Moon = ({ orbitRadius = 2.5, size = 0.27, timeSpeed = 1 }) => {
   const moonRef = useRef();
   const orbitRef = useRef();
   
-  // Load moon texture - ensure you have this image in your public/textures folder
+  // Load moon texture
   const moonTexture = useTexture('/textures/moon.jpg');
   
   // Earth's moon takes about 27.3 days to orbit Earth

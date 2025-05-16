@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import { useFrame, extend } from '@react-three/fiber';
 import { Sphere, useTexture } from '@react-three/drei';
 import * as THREE from 'three';
+import Moon from './Moon'; // Import the Moon component
 
 // Earth shader material with simplified shadowing like Mercury/Venus
 const EarthShaderMaterial = {
@@ -126,6 +127,13 @@ const Earth = ({ orbitRadius = 12,onClick, timeSpeed = 1  }) => {
           }}>
           <earthMaterial attach="material" />
         </Sphere>
+
+        {/* Add Moon component here */}
+        <Moon 
+          orbitRadius={2.5} 
+          size={0.27} 
+          timeSpeed={timeSpeed} 
+        />
       </group>
     </group>
   );
