@@ -1,10 +1,8 @@
-import { useState,useEffect} from 'react'
-
 import './App.css'
 import Solar from './Solar';
 
 function App() {
-  
+  console.log('App rendering');
   return (
     <>
       <Solar/>

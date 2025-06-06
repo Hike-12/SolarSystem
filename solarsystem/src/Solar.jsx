@@ -422,5 +422,3 @@ const Solar = () => {
 };
 
 export default Solar;
-
-/* eslint-disable react/prop-types */
