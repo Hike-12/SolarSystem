@@ -1,7 +1,16 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { usePlayground } from './PlaygroundContext';
-import { ChevronDown, X, RotateCcw, Rocket } from 'lucide-react';
+import { 
+  ChevronDown, 
+  X, 
+  RotateCcw, 
+  Rocket, 
+  Globe, 
+  Sun, 
+  Mountain,
+  Wind
+} from 'lucide-react';
 
 const Slider = ({ label, value, min, max, step, onChange, unit = '' }) => (
   <div className="mb-3">
@@ -111,13 +120,13 @@ const Playground = ({ isOpen, onClose }) => {
               {/* Content */}
               <div className="flex-1 overflow-y-auto">
                 {/* Global Settings */}
-                <Section title="🌌 Global Settings" defaultOpen={true}>
+                <Section title={<><Globe size={16} className="inline mr-2" />Global Settings</>} defaultOpen={true}>
                   <Slider
                     label="Time Scale"
                     value={values.timeScale}
-                    min={0.1}
-                    max={5}
-                    step={0.1}
+                    min={0.2}
+                    max={10}
+                    step={0.2}
                     onChange={(val) => updateValue('timeScale', val)}
                     unit="x"
                   />
@@ -132,7 +141,7 @@ const Playground = ({ isOpen, onClose }) => {
                 </Section>
 
                 {/* Sun */}
-                <Section title="☀️ Sun">
+                <Section title={<><Sun size={16} className="inline mr-2" />Sun</>}>
                   <Slider
                     label="Size"
                     value={values.sunSize}
@@ -152,7 +161,7 @@ const Playground = ({ isOpen, onClose }) => {
                 </Section>
 
                 {/* Inner Planets */}
-                <Section title="🪨 Inner Planets">
+                <Section title={<><Mountain size={16} className="inline mr-2" />Inner Planets</>}>
                   <div className="space-y-4">
                     {/* Mercury */}
                     <div className="bg-gray-800 p-3 rounded">
@@ -178,7 +187,7 @@ const Playground = ({ isOpen, onClose }) => {
                         label="Orbit Speed"
                         value={values.mercurySpeed}
                         min={0}
-                        max={0.1}
+                        max={0.5}
                         step={0.001}
                         onChange={(val) => updateValue('mercurySpeed', val)}
                       />
@@ -216,7 +225,7 @@ const Playground = ({ isOpen, onClose }) => {
                         label="Orbit Speed"
                         value={values.venusSpeed}
                         min={0}
-                        max={0.1}
+                        max={0.4}
                         step={0.001}
                         onChange={(val) => updateValue('venusSpeed', val)}
                       />
@@ -254,7 +263,7 @@ const Playground = ({ isOpen, onClose }) => {
                         label="Orbit Speed"
                         value={values.earthSpeed}
                         min={0}
-                        max={0.1}
+                        max={0.3}
                         step={0.001}
                         onChange={(val) => updateValue('earthSpeed', val)}
                       />
@@ -292,7 +301,7 @@ const Playground = ({ isOpen, onClose }) => {
                         label="Orbit Speed"
                         value={values.marsSpeed}
                         min={0}
-                        max={0.1}
+                        max={0.25}
                         step={0.001}
                         onChange={(val) => updateValue('marsSpeed', val)}
                       />
@@ -309,7 +318,7 @@ const Playground = ({ isOpen, onClose }) => {
                 </Section>
 
                 {/* Outer Planets */}
-                <Section title="🪐 Gas Giants">
+                <Section title={<><Wind size={16} className="inline mr-2" />Gas Giants</>}>
                   <div className="space-y-4">
                     {/* Jupiter */}
                     <div className="bg-gray-800 p-3 rounded">
@@ -335,7 +344,7 @@ const Playground = ({ isOpen, onClose }) => {
                         label="Orbit Speed"
                         value={values.jupiterSpeed}
                         min={0}
-                        max={0.02}
+                        max={0.15}
                         step={0.001}
                         onChange={(val) => updateValue('jupiterSpeed', val)}
                       />
@@ -373,7 +382,7 @@ const Playground = ({ isOpen, onClose }) => {
                         label="Orbit Speed"
                         value={values.saturnSpeed}
                         min={0}
-                        max={0.02}
+                        max={0.12}
                         step={0.001}
                         onChange={(val) => updateValue('saturnSpeed', val)}
                       />
@@ -411,7 +420,7 @@ const Playground = ({ isOpen, onClose }) => {
                         label="Orbit Speed"
                         value={values.uranusSpeed}
                         min={0}
-                        max={0.02}
+                        max={0.1}
                         step={0.001}
                         onChange={(val) => updateValue('uranusSpeed', val)}
                       />
@@ -449,7 +458,7 @@ const Playground = ({ isOpen, onClose }) => {
                         label="Orbit Speed"
                         value={values.neptuneSpeed}
                         min={0}
-                        max={0.02}
+                        max={0.08}
                         step={0.001}
                         onChange={(val) => updateValue('neptuneSpeed', val)}
                       />
