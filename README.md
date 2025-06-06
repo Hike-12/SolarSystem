@@ -232,13 +232,6 @@ We welcome contributions! Here's how:
 - Test on multiple devices
 - Maintain 60fps performance
 - Use meaningful commit messages
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
 ---
 
 ## 🙏 Acknowledgments
@@ -247,4 +240,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **Three.js Community** for 3D graphics inspiration
 - **React Three Fiber** for seamless React integration
 - **ESA** for astronomical data accuracy
-
