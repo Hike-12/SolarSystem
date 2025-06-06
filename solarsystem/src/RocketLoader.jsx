@@ -109,7 +109,7 @@ const RocketLoader = () => {
         </div>
       </div>
       
-      <style jsx>{`
+      <style>{`
         .loading-container {
           width: 100vw;
           height: 100vh;
