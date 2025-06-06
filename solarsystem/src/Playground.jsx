@@ -471,7 +471,7 @@ const Playground = ({ isOpen, onClose }) => {
       </AnimatePresence>
 
       {/* Custom CSS for sliders */}
-      <style jsx>{`
+      <style>{`
         .slider::-webkit-slider-thumb {
           appearance: none;
           height: 16px;
