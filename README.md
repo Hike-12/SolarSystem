@@ -2,7 +2,7 @@
 
 # 🌌 Celestia - Interactive Solar System
 
-<img src="public/logo.png" alt="Celestia Logo" width="120" height="120">
+<img src="solarsystem/public/logo.png" alt="Celestia Logo" width="120" height="120">
 
 *An immersive, real-time 3D solar system simulation built with React Three Fiber*
 
@@ -11,8 +11,6 @@
 [![Vite](https://img.shields.io/badge/Vite-Latest-purple.svg)](https://vitejs.dev/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-
-![Solar System Preview](https://via.placeholder.com/800x400/0a0e27/ffffff?text=Celestia+Solar+System+Preview)
 
 </div>
 
