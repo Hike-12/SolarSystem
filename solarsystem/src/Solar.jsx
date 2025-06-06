@@ -66,7 +66,7 @@ const AudioManager = ({ muted }) => {
   
   useEffect(() => {
     // Create audio element
-    const audio = new Audio('/sounds/space-ambient.mp3');
+    const audio = new Audio('/sounds/space.mp3');
     audio.loop = true;
     audio.volume = 0.3;
     audioRef.current = audio;
