@@ -315,16 +315,16 @@ const SolarContent = () => {
           {loadStage >= 1 && (
             <>
               <Suspense fallback={null}>
-                {showOrbitLines && <OrbitLine radius={8} color="#6A6A92" eccentricity={0.2}/>}
+                {showOrbitLines && <OrbitLine radius={values.mercuryOrbit} color="#6A6A92" eccentricity={0.2}/>}
                 <Mercury 
-                  orbitRadius={8}
+                  orbitRadius={values.mercuryOrbit}
                   onClick={handlePlanetClick}
                   timeSpeed={values.timeScale}
                 />
                 
-                {showOrbitLines && <OrbitLine radius={13} color="#E89D65" eccentricity={0.1}/>}
+                {showOrbitLines && <OrbitLine radius={values.venusOrbit} color="#E89D65" eccentricity={0.1}/>}
                 <Venus 
-                  orbitRadius={13}
+                  orbitRadius={values.venusOrbit}
                   onClick={handlePlanetClick}
                   timeSpeed={values.timeScale}
                 />
@@ -335,16 +335,16 @@ const SolarContent = () => {
           {/* Earth and Mars */}
           {loadStage >= 2 && (
             <Suspense fallback={null}>
-              {showOrbitLines && <OrbitLine radius={18} color="#4A99E9" eccentricity={0.017}/>}
+              {showOrbitLines && <OrbitLine radius={values.earthOrbit} color="#4A99E9" eccentricity={0.017}/>}
               <Earth 
-                orbitRadius={18}
+                orbitRadius={values.earthOrbit}
                 onClick={handlePlanetClick}
                 timeSpeed={values.timeScale}
               />
               
-              {showOrbitLines && <OrbitLine radius={26} color="#E27B58" eccentricity={0.09}/>}
+              {showOrbitLines && <OrbitLine radius={values.marsOrbit} color="#E27B58" eccentricity={0.09}/>}
               <Mars 
-                orbitRadius={26}
+                orbitRadius={values.marsOrbit}
                 onClick={handlePlanetClick}
                 timeSpeed={values.timeScale}
               />
@@ -355,8 +355,8 @@ const SolarContent = () => {
           {loadStage >= 3 && (
             <Suspense fallback={null}>
               <AsteroidBelt 
-                innerRadius={32} 
-                outerRadius={42} 
+                innerRadius={values.marsOrbit + 6} 
+                outerRadius={values.jupiterOrbit - 10} 
                 count={800}
               />
             </Suspense>
@@ -365,16 +365,16 @@ const SolarContent = () => {
           {/* Outer planets */}
           {loadStage >= 4 && (
             <Suspense fallback={null}>
-              {showOrbitLines && <OrbitLine radius={52} color="#E8C275" eccentricity={0.049}/>}
+              {showOrbitLines && <OrbitLine radius={values.jupiterOrbit} color="#E8C275" eccentricity={0.049}/>}
               <Jupiter 
-                orbitRadius={52} 
+                orbitRadius={values.jupiterOrbit} 
                 onClick={handlePlanetClick}
                 timeSpeed={values.timeScale}
               />
               
-              {showOrbitLines && <OrbitLine radius={64} color="#E8B465" eccentricity={0.057}/>}
+              {showOrbitLines && <OrbitLine radius={values.saturnOrbit} color="#E8B465" eccentricity={0.057}/>}
               <Saturn 
-                orbitRadius={64} 
+                orbitRadius={values.saturnOrbit} 
                 onClick={handlePlanetClick}
                 timeSpeed={values.timeScale}
               />
@@ -384,16 +384,16 @@ const SolarContent = () => {
           {/* Furthest planets */}
           {loadStage >= 5 && (
             <Suspense fallback={null}>
-              {showOrbitLines && <OrbitLine radius={76} color="#4FC3C3" eccentricity={0.046}/>}
+              {showOrbitLines && <OrbitLine radius={values.uranusOrbit} color="#4FC3C3" eccentricity={0.046}/>}
               <Uranus 
-                orbitRadius={76} 
+                orbitRadius={values.uranusOrbit} 
                 onClick={handlePlanetClick}
                 timeSpeed={values.timeScale}
               />
               
-              {showOrbitLines && <OrbitLine radius={88} color="#3066BE" eccentricity={0.009}/>}
+              {showOrbitLines && <OrbitLine radius={values.neptuneOrbit} color="#3066BE" eccentricity={0.009}/>}
               <Neptune 
-                orbitRadius={88} 
+                orbitRadius={values.neptuneOrbit} 
                 onClick={handlePlanetClick}
                 timeSpeed={values.timeScale}
               />

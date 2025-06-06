@@ -27,6 +27,16 @@ export const PlaygroundProvider = ({ children }) => {
     uranusSize: 1.6,
     neptuneSize: 1.5,
     
+    // Orbit distances
+    mercuryOrbit: 8,
+    venusOrbit: 13,
+    earthOrbit: 18,
+    marsOrbit: 26,
+    jupiterOrbit: 52,
+    saturnOrbit: 64,
+    uranusOrbit: 76,
+    neptuneOrbit: 88,
+    
     // Orbit speeds
     mercurySpeed: 0.02,
     venusSpeed: 0.015,
@@ -72,6 +82,14 @@ export const PlaygroundProvider = ({ children }) => {
       saturnSize: 1.8,
       uranusSize: 1.6,
       neptuneSize: 1.5,
+      mercuryOrbit: 8,
+      venusOrbit: 13,
+      earthOrbit: 18,
+      marsOrbit: 26,
+      jupiterOrbit: 52,
+      saturnOrbit: 64,
+      uranusOrbit: 76,
+      neptuneOrbit: 88,
       mercurySpeed: 0.02,
       venusSpeed: 0.015,
       earthSpeed: 0.01,

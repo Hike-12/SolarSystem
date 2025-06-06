@@ -158,6 +158,15 @@ const Playground = ({ isOpen, onClose }) => {
                     <div className="bg-gray-800 p-3 rounded">
                       <h4 className="text-sm font-medium text-orange-400 mb-2">☿ Mercury</h4>
                       <Slider
+                        label="Orbit Distance"
+                        value={values.mercuryOrbit}
+                        min={5}
+                        max={15}
+                        step={0.5}
+                        onChange={(val) => updateValue('mercuryOrbit', val)}
+                        unit=" AU"
+                      />
+                      <Slider
                         label="Size"
                         value={values.mercurySize}
                         min={0.1}
@@ -186,6 +195,15 @@ const Playground = ({ isOpen, onClose }) => {
                     {/* Venus */}
                     <div className="bg-gray-800 p-3 rounded">
                       <h4 className="text-sm font-medium text-yellow-400 mb-2">♀ Venus</h4>
+                      <Slider
+                        label="Orbit Distance"
+                        value={values.venusOrbit}
+                        min={8}
+                        max={20}
+                        step={0.5}
+                        onChange={(val) => updateValue('venusOrbit', val)}
+                        unit=" AU"
+                      />
                       <Slider
                         label="Size"
                         value={values.venusSize}
@@ -216,6 +234,15 @@ const Playground = ({ isOpen, onClose }) => {
                     <div className="bg-gray-800 p-3 rounded">
                       <h4 className="text-sm font-medium text-blue-400 mb-2">🌍 Earth</h4>
                       <Slider
+                        label="Orbit Distance"
+                        value={values.earthOrbit}
+                        min={12}
+                        max={25}
+                        step={0.5}
+                        onChange={(val) => updateValue('earthOrbit', val)}
+                        unit=" AU"
+                      />
+                      <Slider
                         label="Size"
                         value={values.earthSize}
                         min={0.1}
@@ -244,6 +271,15 @@ const Playground = ({ isOpen, onClose }) => {
                     {/* Mars */}
                     <div className="bg-gray-800 p-3 rounded">
                       <h4 className="text-sm font-medium text-red-400 mb-2">♂ Mars</h4>
+                      <Slider
+                        label="Orbit Distance"
+                        value={values.marsOrbit}
+                        min={20}
+                        max={35}
+                        step={0.5}
+                        onChange={(val) => updateValue('marsOrbit', val)}
+                        unit=" AU"
+                      />
                       <Slider
                         label="Size"
                         value={values.marsSize}
@@ -279,6 +315,15 @@ const Playground = ({ isOpen, onClose }) => {
                     <div className="bg-gray-800 p-3 rounded">
                       <h4 className="text-sm font-medium text-orange-300 mb-2">♃ Jupiter</h4>
                       <Slider
+                        label="Orbit Distance"
+                        value={values.jupiterOrbit}
+                        min={40}
+                        max={70}
+                        step={1}
+                        onChange={(val) => updateValue('jupiterOrbit', val)}
+                        unit=" AU"
+                      />
+                      <Slider
                         label="Size"
                         value={values.jupiterSize}
                         min={1}
@@ -307,6 +352,15 @@ const Playground = ({ isOpen, onClose }) => {
                     {/* Saturn */}
                     <div className="bg-gray-800 p-3 rounded">
                       <h4 className="text-sm font-medium text-yellow-300 mb-2">♄ Saturn</h4>
+                      <Slider
+                        label="Orbit Distance"
+                        value={values.saturnOrbit}
+                        min={50}
+                        max={80}
+                        step={1}
+                        onChange={(val) => updateValue('saturnOrbit', val)}
+                        unit=" AU"
+                      />
                       <Slider
                         label="Size"
                         value={values.saturnSize}
@@ -337,6 +391,15 @@ const Playground = ({ isOpen, onClose }) => {
                     <div className="bg-gray-800 p-3 rounded">
                       <h4 className="text-sm font-medium text-cyan-300 mb-2">⛢ Uranus</h4>
                       <Slider
+                        label="Orbit Distance"
+                        value={values.uranusOrbit}
+                        min={60}
+                        max={90}
+                        step={1}
+                        onChange={(val) => updateValue('uranusOrbit', val)}
+                        unit=" AU"
+                      />
+                      <Slider
                         label="Size"
                         value={values.uranusSize}
                         min={1}
@@ -365,6 +428,15 @@ const Playground = ({ isOpen, onClose }) => {
                     {/* Neptune */}
                     <div className="bg-gray-800 p-3 rounded">
                       <h4 className="text-sm font-medium text-blue-300 mb-2">♆ Neptune</h4>
+                      <Slider
+                        label="Orbit Distance"
+                        value={values.neptuneOrbit}
+                        min={70}
+                        max={100}
+                        step={1}
+                        onChange={(val) => updateValue('neptuneOrbit', val)}
+                        unit=" AU"
+                      />
                       <Slider
                         label="Size"
                         value={values.neptuneSize}
