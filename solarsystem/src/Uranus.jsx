@@ -2,13 +2,14 @@ import React, { useRef } from 'react';
 import { useFrame, extend } from '@react-three/fiber';
 import { Sphere, useTexture, Ring } from '@react-three/drei';
 import * as THREE from 'three';
+import { usePlayground } from './PlaygroundContext';
 
 // Uranus shader material - similar to other gas giants but with unique color profile
 const UranusShaderMaterial = {
   uniforms: {
     dayTexture: { value: null },
     sunDirection: { value: new THREE.Vector3(1, 0, 0) },
-    nightColor: { value: new THREE.Color(0x051520) }, // Dark blue-green for night side
+    nightColor: { value: new THREE.Color(0x001122) }, // Dark blue-green for night side
   },
   vertexShader: `
     varying vec3 vWorldNormal;
@@ -38,7 +39,7 @@ const UranusShaderMaterial = {
       vec3 day = texture2D(dayTexture, vUv).rgb;
       
       // Enhance the blue-green colors of Uranus
-      day *= vec3(0.9, 1.1, 1.15);
+      day *= vec3(0.9, 1.0, 1.1);
 
       // Add ambient illumination to dark side
       vec3 ambient = day * 0.2;
@@ -52,48 +53,10 @@ const UranusShaderMaterial = {
   `
 };
 
-// Faint ring material for Uranus
-const UranusRingShader = {
-  uniforms: {
-    sunDirection: { value: new THREE.Vector3(1, 0, 0) },
-  },
-  vertexShader: `
-    varying vec3 vWorldNormal;
-    varying vec3 vWorldPosition;
-    
-    void main() {
-      vWorldNormal = normalize(mat3(modelMatrix[0].xyz, modelMatrix[1].xyz, modelMatrix[2].xyz) * normal);
-      vec4 worldPosition = modelMatrix * vec4(position, 1.0);
-      vWorldPosition = worldPosition.xyz;
-      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-    }
-  `,
-  fragmentShader: `
-    uniform vec3 sunDirection;
-    varying vec3 vWorldNormal;
-    varying vec3 vWorldPosition;
-    
-    void main() {
-      // Calculate distance from center for ring texture
-      float intensity = abs(dot(normalize(vWorldNormal), normalize(sunDirection)));
-      
-      // The rings cast shadows on themselves
-      float shadeFactor = smoothstep(0.0, 0.4, intensity);
-      
-      // Light blue-white color for Uranus's rings
-      vec3 ringColor = vec3(0.7, 0.85, 0.9);
-      vec3 finalColor = ringColor * mix(0.3, 1.0, shadeFactor);
-      
-      // Very faint rings
-      gl_FragColor = vec4(finalColor, 0.3);
-    }
-  `
-};
-
-const Uranus = ({ orbitRadius = 76,onClick, timeSpeed = 1 }) => {
+const Uranus = ({ orbitRadius = 76, onClick, timeSpeed = 1 }) => {
   const uranusRef = useRef();
-  const ringRef = useRef();
   const orbitRef = useRef();
+  const { values } = usePlayground();
 
   // Load Uranus texture from public folder
   const dayTexture = useTexture('/textures/uranus.jpg');
@@ -103,7 +66,7 @@ const Uranus = ({ orbitRadius = 76,onClick, timeSpeed = 1 }) => {
   const ringInnerRadius = size * 1.4;
   const ringOuterRadius = size * 2.0;
   const rotationSpeed = 1.4; // Uranus rotates in about 17 hours
-  const orbitSpeed = 0.022; // Uranus orbits very slowly
+  const orbitSpeed = 0.018; // Uranus orbits very slowly
   const eccentricity = 0.046; // Uranus's orbit eccentricity
   const axialTilt = 97.77 * Math.PI / 180; // Uranus's extreme axial tilt in radians (97.77 degrees)
 
@@ -114,14 +77,14 @@ const Uranus = ({ orbitRadius = 76,onClick, timeSpeed = 1 }) => {
   }
 
   // Animation for rotation and orbit
-  useFrame(({ clock  }) => {
-    if (uranusRef.current && ringRef.current && orbitRef.current) {
+  useFrame(({ clock }) => {
+    if (uranusRef.current && orbitRef.current) {
       // Self-rotation (Uranus rotates "sideways")
-      uranusRef.current.rotation.y += rotationSpeed * 0.005 * timeSpeed;
+      uranusRef.current.rotation.y += values.uranusRotation * timeSpeed;
       
       // Orbit calculations - same pattern as other planets
       const t = clock.getElapsedTime() * timeSpeed;
-      const theta = t * orbitSpeed;
+      const theta = t * values.uranusSpeed;
       const distance = orbitRadius * (1 - eccentricity * Math.cos(theta));
       const x = distance * Math.cos(theta);
       const z = distance * Math.sin(theta);
@@ -136,7 +99,6 @@ const Uranus = ({ orbitRadius = 76,onClick, timeSpeed = 1 }) => {
       if (uranusRef.current.material.uniforms) {
         const sunDirWorld = new THREE.Vector3(-x, 0, -z).normalize();
         uranusRef.current.material.uniforms.sunDirection.value.copy(sunDirWorld);
-        ringRef.current.material.uniforms.sunDirection.value.copy(sunDirWorld);
       }
     }
   });
@@ -153,42 +115,19 @@ const Uranus = ({ orbitRadius = 76,onClick, timeSpeed = 1 }) => {
     }
   }
   
-  // In the UranusRingMaterial class constructor
-class UranusRingMaterial extends THREE.ShaderMaterial {
-  constructor() {
-    super({
-      uniforms: THREE.UniformsUtils.clone(UranusRingShader.uniforms),
-      vertexShader: UranusRingShader.vertexShader,
-      fragmentShader: UranusRingShader.fragmentShader, 
-      transparent: true,
-      side: THREE.DoubleSide,
-    });
-  }
-}
-  
-  extend({ UranusMaterial, UranusRingMaterial });
+  extend({ UranusMaterial });
 
   return (
     <group>
       <group ref={orbitRef} position={[orbitRadius, 0, 0]} rotation={[axialTilt, 0, 0]}>
         {/* Uranus planet body */}
-        <Sphere ref={uranusRef} args={[size, 128, 64]}
+        <Sphere ref={uranusRef} args={[values.uranusSize, 128, 64]}
         onClick={(e) => {
             e.stopPropagation();
             onClick("Uranus"); // This passes the planet name to the handler
           }}>
           <uranusMaterial attach="material" />
         </Sphere>
-        
-        {/* Uranus's thin rings */}
-        <Ring 
-          ref={ringRef}
-          args={[ringInnerRadius, ringOuterRadius, 128]} 
-          rotation={[Math.PI/2, 0, 0]}
-        >
-          <uranusRingMaterial attach="material" />
-          {/* <meshBasicMaterial color="#4FC3C3" transparent opacity={0.3} side={THREE.DoubleSide} /> */}
-        </Ring>
       </group>
     </group>
   );

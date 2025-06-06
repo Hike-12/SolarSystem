@@ -8,13 +8,16 @@ import { motion, AnimatePresence } from 'framer-motion';
 // Data
 import { planetData, cameraPositions } from './planetData';
 
+// Context
+import { PlaygroundProvider, usePlayground } from './PlaygroundContext';
+
 // Only import essential components directly
 import Sun from './Sun';
 import Starfield from './Starfield';
 import RocketLoader from './RocketLoader';
 import PlanetInfo from './PlanetInfo';
 import Moon from './Moon';
-
+import Playground from './Playground';
 
 // Lazy load the rest
 const Mercury = lazy(() => import('./Mercury'));
@@ -100,7 +103,6 @@ const AudioManager = ({ muted }) => {
 };
 
 // Toast Notification Component
-// Toast Notification Component
 const Toast = ({ message, visible, onClose }) => {
   useEffect(() => {
     if (visible) {
@@ -149,7 +151,7 @@ const Toast = ({ message, visible, onClose }) => {
   );
 };
 
-const Solar = () => {
+const SolarContent = () => {
   // Base states
   const [showOrbitLines, setShowOrbitLines] = useState(true);
   const [loadStage, setLoadStage] = useState(0);
@@ -159,6 +161,10 @@ const Solar = () => {
   const [cameraTarget, setCameraTarget] = useState(null);
   const [audioMuted, setAudioMuted] = useState(false);
   const [showToast, setShowToast] = useState(false);
+  const [showPlayground, setShowPlayground] = useState(false);
+  
+  // Get playground values
+  const { values } = usePlayground();
   
   // Orbit controls ref to disable during camera transitions
   const orbitControlsRef = useRef();
@@ -166,7 +172,6 @@ const Solar = () => {
   // Handle planet click
   const handlePlanetClick = (planet) => {
     setSelectedPlanet(planet);
-    // setCameraTarget(planet);
   };
   
   // Close planet info panel
@@ -211,47 +216,65 @@ const Solar = () => {
       orbitControlsRef.current.enabled = !cameraTarget;
     }
   }, [cameraTarget]);
-  
+
   return (
     <div className="relative w-full h-screen">
       {/* Toast notification */}
       <Toast 
-        message="Click on any planet to learn more about it! You can also mute the audio and toggle orbit lines. Zoom in/out to explore the solar system." 
+        message="Click on any planet to learn more about it! Try the playground to customize everything live! 🚀" 
         visible={showToast} 
         onClose={() => setShowToast(false)} 
       />
       
-      {/* Orbit lines toggle button */}
-      <button 
-  onClick={() => setShowOrbitLines(!showOrbitLines)}
-  className="absolute top-4 right-4 z-10 bg-slate-800/90 hover:bg-slate-700 text-white 
-            px-3 py-1.5 md:px-4 md:py-2 text-xs md:text-sm rounded-md transition-colors backdrop-blur-sm"
->
-  {showOrbitLines ? 'Hide Orbit Lines' : 'Show Orbit Lines'}
-</button>
+      {/* Top Controls */}
+      <div className="absolute top-4 right-4 z-10 flex gap-2">
+        {/* Playground toggle button */}
+        <button 
+          onClick={() => setShowPlayground(!showPlayground)}
+          className={`bg-slate-800/90 hover:bg-slate-700 text-white px-3 py-1.5 md:px-4 md:py-2 
+                     text-xs md:text-sm rounded-md transition-colors backdrop-blur-sm
+                     ${showPlayground ? 'bg-cyan-700/80' : ''}`}
+        >
+          <span className="hidden sm:inline">🚀 Playground</span>
+          <span className="sm:hidden">⚙️</span>
+        </button>
+        
+        {/* Orbit lines toggle button */}
+        <button 
+          onClick={() => setShowOrbitLines(!showOrbitLines)}
+          className="bg-slate-800/90 hover:bg-slate-700 text-white 
+                    px-3 py-1.5 md:px-4 md:py-2 text-xs md:text-sm rounded-md transition-colors backdrop-blur-sm"
+        >
+          <span className="hidden sm:inline">{showOrbitLines ? 'Hide Orbits' : 'Show Orbits'}</span>
+          <span className="sm:hidden">{showOrbitLines ? '🔴' : '⚪'}</span>
+        </button>
+      </div>
       
       {/* Audio control button */}
       <button 
-  className={`absolute top-5 left-5 bg-slate-800/90 hover:bg-slate-700 w-10 h-10 rounded-full 
-              flex items-center justify-center text-white z-10 backdrop-blur-sm
-              ${audioMuted ? 'bg-red-700/80' : ''}`}
-  onClick={() => setAudioMuted(!audioMuted)}
->
-  {audioMuted ? (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <line x1="1" y1="1" x2="23" y2="23"></line>
-      <path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"></path>
-      <path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2a7 7 0 0 1-.11 1.23"></path>
-      <line x1="12" y1="19" x2="12" y2="23"></line>
-      <line x1="8" y1="23" x2="16" y2="23"></line>
-    </svg>
-  ) : (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
-      <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
-    </svg>
-  )}
-</button>
+        className={`absolute top-5 left-5 bg-slate-800/90 hover:bg-slate-700 w-10 h-10 rounded-full 
+                   flex items-center justify-center text-white z-10 backdrop-blur-sm
+                   ${audioMuted ? 'bg-red-700/80' : ''}`}
+        onClick={() => setAudioMuted(!audioMuted)}
+      >
+        {audioMuted ? (
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="1" y1="1" x2="23" y2="23"></line>
+            <path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"></path>
+            <path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2a7 7 0 0 1-.11 1.23"></path>
+            <line x1="12" y1="19" x2="12" y2="23"></line>
+            <line x1="8" y1="23" x2="16" y2="23"></line>
+          </svg>
+        ) : (
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
+            <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
+          </svg>
+        )}
+      </button>
+      
+      {/* Playground Panel */}
+      <Playground isOpen={showPlayground} onClose={() => setShowPlayground(false)} />
       
       {/* Audio manager (out of sight) */}
       <AudioManager muted={audioMuted} />
@@ -274,7 +297,7 @@ const Solar = () => {
         }}
       >
         <color attach="background" args={['#030718']} />
-        <ambientLight intensity={0.5} />
+        <ambientLight intensity={values.ambientLight} />
         
         {/* Camera controller */}
         <CameraController target={cameraTarget} enabled={!!cameraTarget} />
@@ -284,8 +307,8 @@ const Solar = () => {
           <Starfield />
           <Sun 
             position={[0, 0, 0]} 
-            size={4} 
-            onClick= { handlePlanetClick }
+            onClick={handlePlanetClick}
+            timeSpeed={values.timeScale}
           />
           
           {/* Inner planets load next */}
@@ -294,14 +317,16 @@ const Solar = () => {
               <Suspense fallback={null}>
                 {showOrbitLines && <OrbitLine radius={8} color="#6A6A92" eccentricity={0.2}/>}
                 <Mercury 
-                  orbitRadius={8} 
+                  orbitRadius={8}
                   onClick={handlePlanetClick}
+                  timeSpeed={values.timeScale}
                 />
                 
                 {showOrbitLines && <OrbitLine radius={13} color="#E89D65" eccentricity={0.1}/>}
                 <Venus 
-                  orbitRadius={13} 
+                  orbitRadius={13}
                   onClick={handlePlanetClick}
+                  timeSpeed={values.timeScale}
                 />
               </Suspense>
             </>
@@ -312,14 +337,16 @@ const Solar = () => {
             <Suspense fallback={null}>
               {showOrbitLines && <OrbitLine radius={18} color="#4A99E9" eccentricity={0.017}/>}
               <Earth 
-                orbitRadius={18} 
+                orbitRadius={18}
                 onClick={handlePlanetClick}
+                timeSpeed={values.timeScale}
               />
               
               {showOrbitLines && <OrbitLine radius={26} color="#E27B58" eccentricity={0.09}/>}
               <Mars 
-                orbitRadius={26} 
+                orbitRadius={26}
                 onClick={handlePlanetClick}
+                timeSpeed={values.timeScale}
               />
             </Suspense>
           )}
@@ -342,12 +369,14 @@ const Solar = () => {
               <Jupiter 
                 orbitRadius={52} 
                 onClick={handlePlanetClick}
+                timeSpeed={values.timeScale}
               />
               
               {showOrbitLines && <OrbitLine radius={64} color="#E8B465" eccentricity={0.057}/>}
               <Saturn 
                 orbitRadius={64} 
                 onClick={handlePlanetClick}
+                timeSpeed={values.timeScale}
               />
             </Suspense>
           )}
@@ -359,12 +388,14 @@ const Solar = () => {
               <Uranus 
                 orbitRadius={76} 
                 onClick={handlePlanetClick}
+                timeSpeed={values.timeScale}
               />
               
               {showOrbitLines && <OrbitLine radius={88} color="#3066BE" eccentricity={0.009}/>}
               <Neptune 
                 orbitRadius={88} 
                 onClick={handlePlanetClick}
+                timeSpeed={values.timeScale}
               />
             </Suspense>
           )}
@@ -382,4 +413,14 @@ const Solar = () => {
   );
 };
 
+const Solar = () => {
+  return (
+    <PlaygroundProvider>
+      <SolarContent />
+    </PlaygroundProvider>
+  );
+};
+
 export default Solar;
+
+/* eslint-disable react/prop-types */

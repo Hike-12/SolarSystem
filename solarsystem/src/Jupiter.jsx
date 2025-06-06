@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import { useFrame, extend } from '@react-three/fiber';
 import { Sphere, useTexture } from '@react-three/drei';
 import * as THREE from 'three';
+import { usePlayground } from './PlaygroundContext';
 
 // Jupiter shader material - similar to other planets
 const JupiterShaderMaterial = {
@@ -52,14 +53,14 @@ const JupiterShaderMaterial = {
   `
 };
 
-const Jupiter = ({ orbitRadius = 25,onClick, timeSpeed = 1  }) => {
+const Jupiter = ({ orbitRadius = 25, onClick, timeSpeed = 1 }) => {
   const jupiterRef = useRef();
   const orbitRef = useRef();
+  const { values } = usePlayground();
 
   // Load Jupiter texture from public folder
   const dayTexture = useTexture('/textures/jupiter.jpg');
 
-  const size = 2.2; 
   const rotationSpeed = 2.4; // Jupiter rotates faster than Earth (~9.9 hours)
   const orbitSpeed = 0.06; // Jupiter orbits slower than Mars
   const eccentricity = 0.049; // Jupiter's orbit eccentricity
@@ -76,11 +77,11 @@ const Jupiter = ({ orbitRadius = 25,onClick, timeSpeed = 1  }) => {
   useFrame(({ clock }) => {
     if (jupiterRef.current && orbitRef.current) {
       // Self-rotation
-      jupiterRef.current.rotation.y += rotationSpeed * 0.005 * timeSpeed;
+      jupiterRef.current.rotation.y += values.jupiterRotation * timeSpeed;
       
       // Orbit calculations - same pattern as other planets
       const t = clock.getElapsedTime() * timeSpeed;
-      const theta = t * orbitSpeed;
+      const theta = t * values.jupiterSpeed;
       const distance = orbitRadius * (1 - eccentricity * Math.cos(theta));
       const x = distance * Math.cos(theta);
       const z = distance * Math.sin(theta);
@@ -116,7 +117,7 @@ const Jupiter = ({ orbitRadius = 25,onClick, timeSpeed = 1  }) => {
   return (
     <group>
       <group ref={orbitRef} position={[orbitRadius, 0, 0]} rotation={[axialTilt, 0, 0]}>
-        <Sphere ref={jupiterRef} args={[size, 128, 64]}
+        <Sphere ref={jupiterRef} args={[values.jupiterSize, 128, 64]}
         onClick={(e) => {
             e.stopPropagation();
             onClick("Jupiter"); // This passes the planet name to the handler

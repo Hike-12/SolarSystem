@@ -1,9 +1,11 @@
 import React, { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Sphere, useTexture } from '@react-three/drei';
+import { usePlayground } from './PlaygroundContext';
 
-const Sun = ({ position = [0, 0, 0], size = 2 ,onClick, timeSpeed = 1 }) => {
+const Sun = ({ position = [0, 0, 0], onClick, timeSpeed = 1 }) => {
   const sunRef = useRef();
+  const { values } = usePlayground();
   
   // Load sun textures from the public folder
   const sunTextures = useTexture({
@@ -15,7 +17,7 @@ const Sun = ({ position = [0, 0, 0], size = 2 ,onClick, timeSpeed = 1 }) => {
   // Sun rotation animation with pulsing effect
   useFrame(({ clock }) => {
     if (sunRef.current) {
-      sunRef.current.rotation.y += 0.002 *timeSpeed; // Slow rotation
+      sunRef.current.rotation.y += values.sunRotationSpeed * timeSpeed; // Slow rotation
       
       // Create subtle pulsing effect for emissive intensity
       const pulse = Math.sin(clock.getElapsedTime() * 0.5) * 0.2 + 1.3;
@@ -32,7 +34,7 @@ const Sun = ({ position = [0, 0, 0], size = 2 ,onClick, timeSpeed = 1 }) => {
       <pointLight position={[0, 0, 0]} intensity={2.5} color="#FFF9E0" distance={100} />
       
       {/* Sun mesh with texture */}
-      <Sphere ref={sunRef} args={[size, 64, 64]}>
+      <Sphere ref={sunRef} args={[values.sunSize, 64, 64]}>
         <meshStandardMaterial 
           {...sunTextures}
           // emissive="#ffffff" // Use white for the emissive color to let the texture control the appearance
@@ -45,7 +47,7 @@ const Sun = ({ position = [0, 0, 0], size = 2 ,onClick, timeSpeed = 1 }) => {
       </Sphere>
       
       {/* Additional outer glow effect - increased opacity */}
-      <Sphere args={[size * 1.2, 32, 32]}>
+      <Sphere args={[values.sunSize * 1.2, 32, 32]}>
         <meshBasicMaterial 
           color="#FF4500" 
           transparent={true} 
@@ -54,7 +56,7 @@ const Sun = ({ position = [0, 0, 0], size = 2 ,onClick, timeSpeed = 1 }) => {
       </Sphere>
       
       {/* Inner corona for extra detail */}
-      <Sphere args={[size * 1.05, 32, 32]}>
+      <Sphere args={[values.sunSize * 1.05, 32, 32]}>
         <meshBasicMaterial 
           color="#FFF9E0" 
           transparent={true} 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { planetData } from '/src/planetData';
+import { planetData } from './planetData';
 
 const PlanetInfo = ({ planet, onClose }) => {
   if (!planet) return null;

@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import { useFrame, extend } from '@react-three/fiber';
 import { Sphere, useTexture } from '@react-three/drei';
 import * as THREE from 'three';
+import { usePlayground } from './PlaygroundContext';
 
 // Mercury shader material
 const MercuryShaderMaterial = {
@@ -48,30 +49,29 @@ const MercuryShaderMaterial = {
 `
 };
 
-const Mercury = ({ orbitRadius = 5,onClick, timeSpeed = 1  }) => {
+const Mercury = ({ orbitRadius = 5, onClick, timeSpeed = 1 }) => {
   const mercuryRef = useRef();
   const orbitRef = useRef();
+  const { values } = usePlayground();
 
   const dayTexture = useTexture('/textures/mercury.jpg');
 
-  const size = 0.4;
   const rotationSpeed = 0.5;
   const orbitSpeed = 0.3;
   const eccentricity = 0.2;
 
   useFrame(({ clock }) => {
     if (mercuryRef.current && orbitRef.current) {
-      mercuryRef.current.rotation.y += rotationSpeed * 0.005 * timeSpeed;
+      mercuryRef.current.rotation.y += values.mercuryRotation * timeSpeed;
 
       const t = clock.getElapsedTime() * timeSpeed;
-      const theta = t * orbitSpeed;
+      const theta = t * values.mercurySpeed;
       const distance = orbitRadius * (1 - eccentricity * Math.cos(theta));
       const x = distance * Math.cos(theta);
       const z = distance * Math.sin(theta);
 
       orbitRef.current.position.set(x, 0, z);
 
-      // Keep this direction: FROM Mercury's position TO the Sun's position (0,0,0)
       if (mercuryRef.current.material.uniforms) {
         const sunDirWorld = new THREE.Vector3(-x, 0, -z).normalize();
         mercuryRef.current.material.uniforms.sunDirection.value.copy(sunDirWorld);
@@ -87,7 +87,6 @@ const Mercury = ({ orbitRadius = 5,onClick, timeSpeed = 1  }) => {
         vertexShader: MercuryShaderMaterial.vertexShader,
         fragmentShader: MercuryShaderMaterial.fragmentShader,
       });
-      // Ensure texture encoding is correct if needed
       dayTexture.encoding = THREE.sRGBEncoding;
       this.uniforms.dayTexture.value = dayTexture;
     }
@@ -97,12 +96,11 @@ const Mercury = ({ orbitRadius = 5,onClick, timeSpeed = 1  }) => {
   return (
     <group>
       <group ref={orbitRef} position={[orbitRadius, 0, 0]}>
-        <Sphere ref={mercuryRef} args={[size, 64, 32]}
+        <Sphere ref={mercuryRef} args={[values.mercurySize, 64, 32]}
         onClick={(e) => {
             e.stopPropagation();
-            onClick("Mercury"); // This passes the planet name to the handler
+            onClick("Mercury");
           }}>
-          {/* Ensure the material is correctly applied */}
           <mercuryMaterial attach="material" key={MercuryMaterial.key} />
         </Sphere>
       </group>

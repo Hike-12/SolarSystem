@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import { useFrame, extend } from '@react-three/fiber';
 import { Sphere, useTexture, Ring } from '@react-three/drei';
 import * as THREE from 'three';
+import { usePlayground } from './PlaygroundContext';
 
 // Neptune shader material - similar to other gas giants but with deep blue color profile
 const NeptuneShaderMaterial = {
@@ -90,18 +91,18 @@ const NeptuneRingShader = {
   `
 };
 
-const Neptune = ({ orbitRadius = 88 ,onClick, timeSpeed = 1 }) => {
+const Neptune = ({ orbitRadius = 88, onClick, timeSpeed = 1 }) => {
   const neptuneRef = useRef();
   const ringRef = useRef();
   const orbitRef = useRef();
+  const { values } = usePlayground();
 
   // Load Neptune texture from public folder
   const dayTexture = useTexture('/textures/neptune.jpg');
 
   // Neptune's physical properties
-  const size = 1.5; // Neptune is similar to Uranus in size 
-  const ringInnerRadius = size * 1.5;
-  const ringOuterRadius = size * 1.8;
+  const ringInnerRadius = values.neptuneSize * 1.5;
+  const ringOuterRadius = values.neptuneSize * 1.8;
   const rotationSpeed = 1.5; // Neptune rotates in about 16 hours
   const orbitSpeed = 0.011; // Neptune orbits very slowly - even slower than Uranus
   const eccentricity = 0.009; // Neptune's orbit eccentricity is quite low
@@ -117,11 +118,11 @@ const Neptune = ({ orbitRadius = 88 ,onClick, timeSpeed = 1 }) => {
   useFrame(({ clock }) => {
     if (neptuneRef.current && ringRef.current && orbitRef.current) {
       // Self-rotation
-      neptuneRef.current.rotation.y += rotationSpeed * 0.005 * timeSpeed;
+      neptuneRef.current.rotation.y += values.neptuneRotation * timeSpeed;
       
       // Orbit calculations - same pattern as other planets
       const t = clock.getElapsedTime() * timeSpeed;
-      const theta = t * orbitSpeed;
+      const theta = t * values.neptuneSpeed;
       const distance = orbitRadius * (1 - eccentricity * Math.cos(theta));
       const x = distance * Math.cos(theta);
       const z = distance * Math.sin(theta);
@@ -171,7 +172,7 @@ const Neptune = ({ orbitRadius = 88 ,onClick, timeSpeed = 1 }) => {
     <group>
       <group ref={orbitRef} position={[orbitRadius, 0, 0]} rotation={[axialTilt, 0, 0]}>
         {/* Neptune planet body */}
-        <Sphere ref={neptuneRef} args={[size, 128, 64]}
+        <Sphere ref={neptuneRef} args={[values.neptuneSize, 128, 64]}
         onClick={(e) => {
             e.stopPropagation();
             onClick("Neptune"); // This passes the planet name to the handler

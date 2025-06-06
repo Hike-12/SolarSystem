@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import { useFrame, extend } from '@react-three/fiber';
 import { Sphere, useTexture, Ring } from '@react-three/drei';
 import * as THREE from 'three';
+import { usePlayground } from './PlaygroundContext';
 
 // Saturn shader material - similar to Jupiter
 const SaturnShaderMaterial = {
@@ -97,10 +98,11 @@ const SaturnRingMaterial = {
   `
 };
 
-const Saturn = ({ orbitRadius = 64,onClick, timeSpeed = 1  }) => {
+const Saturn = ({ orbitRadius = 64, onClick, timeSpeed = 1 }) => {
   const saturnRef = useRef();
   const ringRef = useRef();
   const orbitRef = useRef();
+  const { values } = usePlayground();
 
   // Load Saturn and ring textures from public folder
   const dayTexture = useTexture('/textures/saturn.jpg');
@@ -108,12 +110,14 @@ const Saturn = ({ orbitRadius = 64,onClick, timeSpeed = 1  }) => {
 
   // Saturn's physical properties relative to Earth (where Earth = 1.0)
   const size = 1.8; // Saturn is smaller than Jupiter in our visualization
-  const ringInnerRadius = size * 1.2;
-  const ringOuterRadius = size * 2.5;
   const rotationSpeed = 2.2; // Saturn rotates faster than Earth (~10.7 hours)
   const orbitSpeed = 0.032; // Saturn orbits slower than Jupiter
   const eccentricity = 0.057; // Saturn's orbit eccentricity
   const axialTilt = 26.73 * Math.PI / 180; // Saturn's axial tilt in radians (26.73 degrees)
+
+  // Calculate ring sizes based on planet size
+  const ringInnerRadius = values.saturnSize * 1.2;
+  const ringOuterRadius = values.saturnSize * 2.5;
 
   // Texture enhancement
   if (dayTexture) {
@@ -130,11 +134,11 @@ const Saturn = ({ orbitRadius = 64,onClick, timeSpeed = 1  }) => {
   useFrame(({ clock }) => {
     if (saturnRef.current && ringRef.current && orbitRef.current) {
       // Self-rotation
-      saturnRef.current.rotation.y += rotationSpeed * 0.005 * timeSpeed;
+      saturnRef.current.rotation.y += values.saturnRotation * timeSpeed;
       
       // Orbit calculations - same pattern as other planets
       const t = clock.getElapsedTime() * timeSpeed;
-      const theta = t * orbitSpeed;
+      const theta = t * values.saturnSpeed;
       const distance = orbitRadius * (1 - eccentricity * Math.cos(theta));
       const x = distance * Math.cos(theta);
       const z = distance * Math.sin(theta);
@@ -185,7 +189,7 @@ const Saturn = ({ orbitRadius = 64,onClick, timeSpeed = 1  }) => {
     <group>
       <group ref={orbitRef} position={[orbitRadius, 0, 0]} rotation={[axialTilt, 0, 0]}>
         {/* Saturn planet body */}
-        <Sphere ref={saturnRef} args={[size, 128, 64]}
+        <Sphere ref={saturnRef} args={[values.saturnSize, 128, 64]}
         onClick={(e) => {
             e.stopPropagation();
             onClick("Saturn"); // This passes the planet name to the handler

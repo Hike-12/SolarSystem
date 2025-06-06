@@ -2,7 +2,8 @@ import React, { useRef } from 'react';
 import { useFrame, extend } from '@react-three/fiber';
 import { Sphere, useTexture } from '@react-three/drei';
 import * as THREE from 'three';
-import Moon from './Moon'; // Import the Moon component
+import Moon from './Moon';
+import { usePlayground } from './PlaygroundContext';
 
 // Earth shader material with simplified shadowing like Mercury/Venus
 const EarthShaderMaterial = {
@@ -48,16 +49,16 @@ const EarthShaderMaterial = {
   `
 };
 
-const Earth = ({ orbitRadius = 12,onClick, timeSpeed = 1  }) => {
+const Earth = ({ orbitRadius = 12, onClick, timeSpeed = 1 }) => {
   const earthRef = useRef();
   const orbitRef = useRef();
+  const { values } = usePlayground();
 
   // Only keep the essential textures: day and night
   const dayTexture = useTexture('/textures/earth-day.jpg');
   const nightTexture = useTexture('/textures/earth-night.jpg');
 
   // Earth's physical properties
-  const size = 1.0;
   const rotationSpeed = 1.0;
   const orbitSpeed = 0.15;
   const eccentricity = 0.017; // Earth's orbit is nearly circular
@@ -78,11 +79,11 @@ const Earth = ({ orbitRadius = 12,onClick, timeSpeed = 1  }) => {
   useFrame(({ clock }) => {
     if (earthRef.current && orbitRef.current) {
       // Self-rotation
-      earthRef.current.rotation.y += rotationSpeed * 0.005 * timeSpeed;
+      earthRef.current.rotation.y += values.earthRotation * timeSpeed;
       
       // Orbit calculations - same as Mercury/Venus
       const t = clock.getElapsedTime() * timeSpeed;
-      const theta = t * orbitSpeed;
+      const theta = t * values.earthSpeed;
       const distance = orbitRadius * (1 - eccentricity * Math.cos(theta));
       const x = distance * Math.cos(theta);
       const z = distance * Math.sin(theta);
@@ -120,7 +121,7 @@ const Earth = ({ orbitRadius = 12,onClick, timeSpeed = 1  }) => {
     <group>
       <group ref={orbitRef} position={[orbitRadius, 0, 0]} rotation={[axialTilt, 0, 0]}>
         {/* Earth */}
-        <Sphere ref={earthRef} args={[size, 64, 32]}
+        <Sphere ref={earthRef} args={[values.earthSize, 64, 32]}
         onClick={(e) => {
             e.stopPropagation();
             onClick("Earth"); // This passes the planet name to the handler

@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import { useFrame, extend } from '@react-three/fiber';
 import { Sphere, useTexture } from '@react-three/drei';
 import * as THREE from 'three';
+import { usePlayground } from './PlaygroundContext';
 
 // Mars shader material - similar to Mercury/Venus approach
 const MarsShaderMaterial = {
@@ -48,15 +49,15 @@ const MarsShaderMaterial = {
   `
 };
 
-const Mars = ({ orbitRadius = 15,onClick, timeSpeed = 1  }) => {
+const Mars = ({ orbitRadius = 15, onClick, timeSpeed = 1 }) => {
   const marsRef = useRef();
   const orbitRef = useRef();
+  const { values } = usePlayground();
 
   // Load Mars texture from public folder
   const dayTexture = useTexture('/textures/mars.jpg');
 
   // Mars physical properties
-  const size = 0.53; // Mars is about half the size of Earth
   const rotationSpeed = 0.9; // Mars rotation is similar to Earth
   const orbitSpeed = 0.12; // Mars orbit is slower than Earth
   const eccentricity = 0.09; // Mars has notable eccentricity
@@ -72,11 +73,11 @@ const Mars = ({ orbitRadius = 15,onClick, timeSpeed = 1  }) => {
   useFrame(({ clock }) => {
     if (marsRef.current && orbitRef.current) {
       // Self-rotation
-      marsRef.current.rotation.y += rotationSpeed * 0.005 * timeSpeed;
+      marsRef.current.rotation.y += values.marsRotation * timeSpeed;
       
       // Orbit calculations - same pattern as other planets
       const t = clock.getElapsedTime() * timeSpeed;
-      const theta = t * orbitSpeed;
+      const theta = t * values.marsSpeed;
       const distance = orbitRadius * (1 - eccentricity * Math.cos(theta));
       const x = distance * Math.cos(theta);
       const z = distance * Math.sin(theta);
@@ -112,7 +113,7 @@ const Mars = ({ orbitRadius = 15,onClick, timeSpeed = 1  }) => {
   return (
     <group>
       <group ref={orbitRef} position={[orbitRadius, 0, 0]} rotation={[axialTilt, 0, 0]}>
-        <Sphere ref={marsRef} args={[size, 64, 32]}
+        <Sphere ref={marsRef} args={[values.marsSize, 64, 32]}
         onClick={(e) => {
             e.stopPropagation();
             onClick("Mars"); // This passes the planet name to the handler
