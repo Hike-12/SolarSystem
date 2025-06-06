@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { usePlayground } from './PlaygroundContext';
+import { ChevronDown, X, RotateCcw, Rocket } from 'lucide-react';
 
 const Slider = ({ label, value, min, max, step, onChange, unit = '' }) => (
   <div className="mb-3">
@@ -32,16 +33,13 @@ const Section = ({ title, children, defaultOpen = false }) => {
         className="w-full flex items-center justify-between p-3 hover:bg-gray-800 transition-colors"
       >
         <h3 className="text-sm font-medium text-white">{title}</h3>
-        <motion.svg
+        <motion.div
           animate={{ rotate: isOpen ? 180 : 0 }}
           transition={{ duration: 0.2 }}
-          className="w-4 h-4 text-gray-400"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
+          className="text-gray-400"
         >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-        </motion.svg>
+          <ChevronDown size={16} />
+        </motion.div>
       </button>
       <AnimatePresence>
         {isOpen && (
@@ -89,21 +87,23 @@ const Playground = ({ isOpen, onClose }) => {
             >
               {/* Header */}
               <div className="flex items-center justify-between p-4 border-b border-gray-700">
-                <h2 className="text-lg font-bold text-white">🚀 Playground</h2>
+                <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                  <Rocket size={20} />
+                  Playground
+                </h2>
                 <div className="flex gap-2">
                   <button
                     onClick={resetToDefaults}
-                    className="px-3 py-1 text-xs bg-orange-600 hover:bg-orange-700 text-white rounded transition-colors"
+                    className="px-3 py-1 text-xs bg-orange-600 hover:bg-orange-700 text-white rounded transition-colors flex items-center gap-1"
                   >
+                    <RotateCcw size={12} />
                     Reset
                   </button>
                   <button
                     onClick={onClose}
                     className="w-8 h-8 flex items-center justify-center hover:bg-gray-800 rounded transition-colors"
                   >
-                    <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
+                    <X size={16} className="text-gray-400" />
                   </button>
                 </div>
               </div>

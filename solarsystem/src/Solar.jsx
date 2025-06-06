@@ -4,6 +4,7 @@ import { Canvas, useThree, useFrame } from '@react-three/fiber';
 import { useProgress, Html } from '@react-three/drei';
 import { gsap } from 'gsap';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Info, X, Settings, Eye, EyeOff, VolumeX, Volume2, Rocket } from 'lucide-react';
 
 // Data
 import { planetData, cameraPositions } from './planetData';
@@ -126,11 +127,7 @@ const Toast = ({ message, visible, onClose }) => {
                     rounded-lg shadow-lg z-50 flex items-center justify-between gap-2 max-w-md mx-auto md:mx-0"
         >
           <div className="flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-cyan-300 flex-shrink-0">
-              <circle cx="12" cy="12" r="10"></circle>
-              <line x1="12" y1="16" x2="12" y2="12"></line>
-              <line x1="12" y1="8" x2="12.01" y2="8"></line>
-            </svg>
+            <Info className="text-cyan-300 flex-shrink-0" size={20} />
             <span className="text-sm md:text-base">{message}</span>
           </div>
           
@@ -140,10 +137,7 @@ const Toast = ({ message, visible, onClose }) => {
             className="text-white/70 hover:text-white ml-2 flex-shrink-0 transition-colors"
             aria-label="Close notification"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
+            <X size={18} />
           </button>
         </motion.div>
       )}
@@ -232,21 +226,21 @@ const SolarContent = () => {
         <button 
           onClick={() => setShowPlayground(!showPlayground)}
           className={`bg-slate-800/90 hover:bg-slate-700 text-white px-3 py-1.5 md:px-4 md:py-2 
-                     text-xs md:text-sm rounded-md transition-colors backdrop-blur-sm
+                     text-xs md:text-sm rounded-md transition-colors backdrop-blur-sm flex items-center gap-1.5
                      ${showPlayground ? 'bg-cyan-700/80' : ''}`}
         >
-          <span className="hidden sm:inline">🚀 Playground</span>
-          <span className="sm:hidden">⚙️</span>
+          <Rocket size={14} />
+          <span className="hidden sm:inline">Playground</span>
         </button>
         
         {/* Orbit lines toggle button */}
         <button 
           onClick={() => setShowOrbitLines(!showOrbitLines)}
           className="bg-slate-800/90 hover:bg-slate-700 text-white 
-                    px-3 py-1.5 md:px-4 md:py-2 text-xs md:text-sm rounded-md transition-colors backdrop-blur-sm"
+                    px-3 py-1.5 md:px-4 md:py-2 text-xs md:text-sm rounded-md transition-colors backdrop-blur-sm flex items-center gap-1.5"
         >
+          {showOrbitLines ? <EyeOff size={14} /> : <Eye size={14} />}
           <span className="hidden sm:inline">{showOrbitLines ? 'Hide Orbits' : 'Show Orbits'}</span>
-          <span className="sm:hidden">{showOrbitLines ? '🔴' : '⚪'}</span>
         </button>
       </div>
       
@@ -258,18 +252,9 @@ const SolarContent = () => {
         onClick={() => setAudioMuted(!audioMuted)}
       >
         {audioMuted ? (
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="1" y1="1" x2="23" y2="23"></line>
-            <path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"></path>
-            <path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2a7 7 0 0 1-.11 1.23"></path>
-            <line x1="12" y1="19" x2="12" y2="23"></line>
-            <line x1="8" y1="23" x2="16" y2="23"></line>
-          </svg>
+          <VolumeX size={16} />
         ) : (
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
-            <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
-          </svg>
+          <Volume2 size={16} />
         )}
       </button>
       

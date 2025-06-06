@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { planetData } from './planetData';
+import { X } from 'lucide-react';
 
 const PlanetInfo = ({ planet, onClose }) => {
   if (!planet) return null;
@@ -25,9 +26,9 @@ const PlanetInfo = ({ planet, onClose }) => {
         </h2>
         <button 
           onClick={onClose} 
-          className="text-2xl text-white/70 hover:text-white transition-colors w-8 h-8 flex items-center justify-center"
+          className="text-white/70 hover:text-white transition-colors w-8 h-8 flex items-center justify-center rounded hover:bg-white/10"
         >
-          ×
+          <X size={18} />
         </button>
       </div>
       

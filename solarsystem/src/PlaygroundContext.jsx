@@ -37,15 +37,15 @@ export const PlaygroundProvider = ({ children }) => {
     uranusOrbit: 76,
     neptuneOrbit: 88,
     
-    // Orbit speeds
-    mercurySpeed: 0.02,
-    venusSpeed: 0.015,
-    earthSpeed: 0.01,
-    marsSpeed: 0.008,
-    jupiterSpeed: 0.005,
-    saturnSpeed: 0.004,
-    uranusSpeed: 0.003,
-    neptuneSpeed: 0.002,
+    // Orbit speeds - Earth = 0.15 as reference, others scaled proportionally
+    mercurySpeed: 0.30,    // Mercury orbits ~2x faster than Earth
+    venusSpeed: 0.225,     // Venus orbits ~1.5x faster than Earth
+    earthSpeed: 0.15,      // Earth reference speed
+    marsSpeed: 0.12,       // Mars orbits ~0.8x Earth's speed
+    jupiterSpeed: 0.075,   // Jupiter orbits ~0.5x Earth's speed
+    saturnSpeed: 0.06,     // Saturn orbits ~0.4x Earth's speed
+    uranusSpeed: 0.045,    // Uranus orbits ~0.3x Earth's speed
+    neptuneSpeed: 0.03,    // Neptune orbits ~0.2x Earth's speed (slowest)
     
     // Rotation speeds
     mercuryRotation: 0.004,
@@ -90,14 +90,14 @@ export const PlaygroundProvider = ({ children }) => {
       saturnOrbit: 64,
       uranusOrbit: 76,
       neptuneOrbit: 88,
-      mercurySpeed: 0.02,
-      venusSpeed: 0.015,
-      earthSpeed: 0.01,
-      marsSpeed: 0.008,
-      jupiterSpeed: 0.005,
-      saturnSpeed: 0.004,
-      uranusSpeed: 0.003,
-      neptuneSpeed: 0.002,
+      mercurySpeed: 0.30,
+      venusSpeed: 0.225,
+      earthSpeed: 0.15,
+      marsSpeed: 0.12,
+      jupiterSpeed: 0.075,
+      saturnSpeed: 0.06,
+      uranusSpeed: 0.045,
+      neptuneSpeed: 0.03,
       mercuryRotation: 0.004,
       venusRotation: -0.002,
       earthRotation: 0.01,
