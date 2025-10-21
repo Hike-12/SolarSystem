@@ -157,6 +157,7 @@ const SolarContent = () => {
   const [showToast, setShowToast] = useState(false);
   const [showPlayground, setShowPlayground] = useState(false);
   
+  const [showMain, setShowMain] = useState(false);
   // Get playground values
   const { values } = usePlayground();
   
@@ -213,6 +214,16 @@ const SolarContent = () => {
 
   return (
     <div className="relative w-full h-screen">
+
+      <div
+        style={{
+          opacity: showMain ? 1 : 0,
+          transition: 'opacity 0.7s',
+          pointerEvents: showMain ? 'auto' : 'none'
+        }}
+        className="absolute inset-0 w-full h-full"
+      ></div>
+
       {/* Toast notification */}
       <Toast 
         message="Click on any planet to learn more about it! Try the playground to customize everything live! 🚀" 
@@ -288,7 +299,7 @@ const SolarContent = () => {
         <CameraController target={cameraTarget} enabled={!!cameraTarget} />
         
         {/* Essential components load first */}
-        <Suspense fallback={<RocketLoader />}>
+        <Suspense fallback={<RocketLoader onFinish={() => setShowMain(true)} />}>
           <Starfield />
           <Sun 
             position={[0, 0, 0]} 
