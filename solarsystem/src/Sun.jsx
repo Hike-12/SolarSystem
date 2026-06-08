@@ -20,7 +20,7 @@ const Sun = ({ position = [0, 0, 0], onClick, timeSpeed = 1 }) => {
       sunRef.current.rotation.y += values.sunRotationSpeed * timeSpeed; // Slow rotation
       
       // Create subtle pulsing effect for emissive intensity
-      const pulse = Math.sin(clock.getElapsedTime() * 0.5) * 0.3 + 2.0;
+      const pulse = Math.sin(clock.getElapsedTime() * 0.5) * 0.15 + 0.5;
       sunRef.current.material.emissiveIntensity = pulse;
     }
   });
@@ -37,8 +37,8 @@ const Sun = ({ position = [0, 0, 0], onClick, timeSpeed = 1 }) => {
       <Sphere ref={sunRef} args={[values.sunSize, 64, 64]}>
         <meshStandardMaterial 
           {...sunTextures}
-          // emissive="#ffffff" // Use white for the emissive color to let the texture control the appearance
-          emissiveIntensity={0.1} // Increased from default
+          emissive="#ff8800"
+          emissiveIntensity={0.5}
           toneMapped={false} // Prevents tone mapping from dimming the bright sun
           normalScale={[0.05, 0.05]}
           roughness={0.6}
