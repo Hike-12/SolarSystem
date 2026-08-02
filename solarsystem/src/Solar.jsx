@@ -158,6 +158,7 @@ const SolarContent = () => {
   const [showPlayground, setShowPlayground] = useState(false);
   
   const [showMain, setShowMain] = useState(false);
+  const [isLoaderDone, setIsLoaderDone] = useState(false);
   // Get playground values
   const { values } = usePlayground();
   
@@ -282,6 +283,17 @@ const SolarContent = () => {
         )}
       </AnimatePresence>
       
+      {/* Loader rendered independently and OUTSIDE Canvas to ensure it loads INSTANTLY */}
+      {!isLoaderDone && (
+        <RocketLoader 
+          loadStage={loadStage} 
+          onFinish={() => {
+            setIsLoaderDone(true);
+            setShowMain(true);
+          }} 
+        />
+      )}
+
       {/* 3D Canvas */}
       <Canvas
         camera={{ position: [200, 50, 120], fov: 50 }}
@@ -299,7 +311,7 @@ const SolarContent = () => {
         <CameraController target={cameraTarget} enabled={!!cameraTarget} />
         
         {/* Essential components load first */}
-        <Suspense fallback={<RocketLoader onFinish={() => setShowMain(true)} />}>
+        <Suspense fallback={null}>
           <Starfield />
           <Sun 
             position={[0, 0, 0]} 
