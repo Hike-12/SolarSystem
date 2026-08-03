@@ -227,7 +227,7 @@ const SolarContent = () => {
 
       {/* Toast notification */}
       <Toast 
-        message="Click on any planet to learn more about it! Try the playground to customize everything live! 🚀" 
+        message="Click on any planet to learn more about it! Try the playground to customize everything live!" 
         visible={showToast} 
         onClose={() => setShowToast(false)} 
       />
