@@ -4,7 +4,16 @@ import { Canvas, useThree, useFrame } from '@react-three/fiber';
 import { useProgress, Html } from '@react-three/drei';
 import { gsap } from 'gsap';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Info, X, Settings, Eye, EyeOff, VolumeX, Volume2, Rocket } from 'lucide-react';
+import { 
+  IconInfoCircle as Info, 
+  IconX as X, 
+  IconSettings as Settings, 
+  IconEye as Eye, 
+  IconEyeOff as EyeOff, 
+  IconVolume3 as VolumeX, 
+  IconVolume as Volume2, 
+  IconRocket as Rocket 
+} from '@tabler/icons-react';
 
 // Data
 import { planetData, cameraPositions } from './planetData';

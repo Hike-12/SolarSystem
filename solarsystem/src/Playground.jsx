@@ -2,15 +2,15 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { usePlayground } from './PlaygroundContext';
 import { 
-  ChevronDown, 
-  X, 
-  RotateCcw, 
-  Rocket, 
-  Globe, 
-  Sun, 
-  Mountain,
-  Wind
-} from 'lucide-react';
+  IconChevronDown as ChevronDown, 
+  IconX as X, 
+  IconArrowBackUp as RotateCcw, 
+  IconRocket as Rocket, 
+  IconWorld as Globe, 
+  IconSun as Sun, 
+  IconMountain as Mountain,
+  IconWind as Wind
+} from '@tabler/icons-react';
 
 const Slider = ({ label, value, min, max, step, onChange, unit = '' }) => (
   <div className="mb-3">
