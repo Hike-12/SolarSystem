@@ -10,7 +10,7 @@ import {
   IconSettings as Settings, 
   IconEye as Eye, 
   IconEyeOff as EyeOff, 
-  IconVolume3 as VolumeX, 
+  IconVolumeOff as VolumeX, 
   IconVolume as Volume2, 
   IconRocket as Rocket 
 } from '@tabler/icons-react';
@@ -132,11 +132,11 @@ const Toast = ({ message, visible, onClose }) => {
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.3 }}
           className="fixed top-20 left-4 right-4 md:left-1/2 md:right-auto md:transform md:-translate-x-1/2 
-                    bg-cyan-900/80 backdrop-blur-md text-white px-4 py-3 md:px-6 
-                    rounded-lg shadow-lg z-50 flex items-center justify-between gap-2 max-w-md mx-auto md:mx-0"
+                    bg-black/80 backdrop-blur-xl border border-white/10 text-white px-5 py-3 
+                    rounded-md shadow-2xl z-50 flex items-center justify-between gap-3 max-w-md mx-auto md:mx-0"
         >
-          <div className="flex items-center gap-2">
-            <Info className="text-cyan-300 flex-shrink-0" size={20} />
+          <div className="flex items-center gap-2.5">
+            <Info className="text-white/60 flex-shrink-0" size={18} />
             <span className="text-sm md:text-base">{message}</span>
           </div>
           
@@ -242,35 +242,39 @@ const SolarContent = () => {
       />
       
       {/* Top Controls */}
-      <div className="absolute top-4 right-4 z-10 flex gap-2">
+      <div className="absolute top-5 right-5 z-10 flex gap-3">
         {/* Playground toggle button */}
         <button 
           onClick={() => setShowPlayground(!showPlayground)}
-          className={`bg-slate-800/90 hover:bg-slate-700 text-white px-3 py-1.5 md:px-4 md:py-2 
-                     text-xs md:text-sm rounded-md transition-colors backdrop-blur-sm flex items-center gap-1.5
-                     ${showPlayground ? 'bg-cyan-700/80' : ''}`}
+          className={`px-4 py-2 text-sm rounded-md transition-all backdrop-blur-md flex items-center gap-2 border
+                     ${showPlayground 
+                       ? 'bg-white text-black border-white' 
+                       : 'bg-black/40 text-white/80 hover:text-white border-white/10 hover:bg-white/10'}`}
         >
-          <Rocket size={14} />
-          <span className="hidden sm:inline">Playground</span>
+          <Rocket size={16} />
+          <span className="hidden sm:inline font-medium tracking-wide">Playground</span>
         </button>
         
         {/* Orbit lines toggle button */}
         <button 
           onClick={() => setShowOrbitLines(!showOrbitLines)}
-          className="bg-slate-800/90 hover:bg-slate-700 text-white 
-                    px-3 py-1.5 md:px-4 md:py-2 text-xs md:text-sm rounded-md transition-colors backdrop-blur-sm flex items-center gap-1.5"
+          className={`px-4 py-2 text-sm rounded-md transition-all backdrop-blur-md flex items-center gap-2 border
+                     ${!showOrbitLines 
+                       ? 'bg-white text-black border-white' 
+                       : 'bg-black/40 text-white/80 hover:text-white border-white/10 hover:bg-white/10'}`}
         >
-          {showOrbitLines ? <EyeOff size={14} /> : <Eye size={14} />}
-          <span className="hidden sm:inline">{showOrbitLines ? 'Hide Orbits' : 'Show Orbits'}</span>
+          {showOrbitLines ? <EyeOff size={16} /> : <Eye size={16} />}
+          <span className="hidden sm:inline font-medium tracking-wide">{showOrbitLines ? 'Hide Orbits' : 'Show Orbits'}</span>
         </button>
       </div>
       
       {/* Audio control button */}
       <button 
-        className={`absolute top-5 left-5 bg-slate-800/90 hover:bg-slate-700 w-10 h-10 rounded-full 
-                   flex items-center justify-center text-white z-10 backdrop-blur-sm
-                   ${audioMuted ? 'bg-red-700/80' : ''}`}
         onClick={() => setAudioMuted(!audioMuted)}
+        className={`absolute top-5 left-5 w-10 h-10 rounded-md transition-all backdrop-blur-md flex items-center justify-center border z-10
+                   ${audioMuted 
+                     ? 'bg-white text-black border-white' 
+                     : 'bg-black/40 text-white/80 hover:text-white border-white/10 hover:bg-white/10'}`}
       >
         {audioMuted ? (
           <VolumeX size={16} />

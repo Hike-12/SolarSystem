@@ -15,8 +15,8 @@ import {
 const Slider = ({ label, value, min, max, step, onChange, unit = '' }) => (
   <div className="mb-3">
     <div className="flex justify-between items-center mb-1">
-      <label className="text-xs text-gray-300">{label}</label>
-      <span className="text-xs text-cyan-400 font-mono">
+      <label className="text-xs text-white/60">{label}</label>
+      <span className="text-xs text-white font-mono">
         {typeof value === 'number' ? value.toFixed(step < 0.01 ? 3 : 2) : value}{unit}
       </span>
     </div>
@@ -27,7 +27,7 @@ const Slider = ({ label, value, min, max, step, onChange, unit = '' }) => (
       step={step}
       value={value}
       onChange={(e) => onChange(parseFloat(e.target.value))}
-      className="w-full h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
+      className="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer slider"
     />
   </div>
 );
@@ -36,16 +36,16 @@ const Section = ({ title, children, defaultOpen = false }) => {
   const [isOpen, setIsOpen] = useState(defaultOpen);
   
   return (
-    <div className="border-b border-gray-700 last:border-b-0">
+    <div className="border-b border-white/10 last:border-b-0">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between p-3 hover:bg-gray-800 transition-colors"
+        className="w-full flex items-center justify-between p-4 hover:bg-white/5 transition-colors"
       >
         <h3 className="text-sm font-medium text-white">{title}</h3>
         <motion.div
           animate={{ rotate: isOpen ? 180 : 0 }}
           transition={{ duration: 0.2 }}
-          className="text-gray-400"
+          className="text-white/40"
         >
           <ChevronDown size={16} />
         </motion.div>
@@ -59,7 +59,7 @@ const Section = ({ title, children, defaultOpen = false }) => {
             transition={{ duration: 0.2 }}
             className="overflow-hidden"
           >
-            <div className="p-3 pt-0">
+            <div className="p-4 pt-0">
               {children}
             </div>
           </motion.div>
@@ -92,10 +92,10 @@ const Playground = ({ isOpen, onClose }) => {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed right-0 top-0 h-full w-full sm:w-80 lg:w-96 bg-gray-900 shadow-2xl z-50 flex flex-col"
+              className="fixed right-0 top-0 h-full w-full sm:w-80 lg:w-96 bg-black/60 backdrop-blur-xl border-l border-white/10 shadow-2xl z-50 flex flex-col"
             >
               {/* Header */}
-              <div className="flex items-center justify-between p-4 border-b border-gray-700">
+              <div className="flex items-center justify-between p-5 border-b border-white/10">
                 <h2 className="text-lg font-bold text-white flex items-center gap-2">
                   <Rocket size={20} />
                   Playground
@@ -103,16 +103,16 @@ const Playground = ({ isOpen, onClose }) => {
                 <div className="flex gap-2">
                   <button
                     onClick={resetToDefaults}
-                    className="px-3 py-1 text-xs bg-orange-600 hover:bg-orange-700 text-white rounded transition-colors flex items-center gap-1"
+                    className="px-3 py-1.5 text-xs bg-white/10 hover:bg-white/20 border border-white/10 text-white rounded transition-colors flex items-center gap-1.5"
                   >
-                    <RotateCcw size={12} />
+                    <RotateCcw size={14} />
                     Reset
                   </button>
                   <button
                     onClick={onClose}
-                    className="w-8 h-8 flex items-center justify-center hover:bg-gray-800 rounded transition-colors"
+                    className="w-8 h-8 flex items-center justify-center hover:bg-white/10 rounded transition-colors"
                   >
-                    <X size={16} className="text-gray-400" />
+                    <X size={16} className="text-white/60" />
                   </button>
                 </div>
               </div>
@@ -164,8 +164,8 @@ const Playground = ({ isOpen, onClose }) => {
                 <Section title={<><Mountain size={16} className="inline mr-2" />Inner Planets</>}>
                   <div className="space-y-4">
                     {/* Mercury */}
-                    <div className="bg-gray-800 p-3 rounded">
-                      <h4 className="text-sm font-medium text-orange-400 mb-2">☿ Mercury</h4>
+                    <div className="bg-white/5 border border-white/10 p-4 rounded-md">
+                      <h4 className="text-sm font-medium text-white mb-3 flex items-center gap-2"><span className="text-white/40">☿</span> Mercury</h4>
                       <Slider
                         label="Orbit Distance"
                         value={values.mercuryOrbit}
@@ -202,8 +202,8 @@ const Playground = ({ isOpen, onClose }) => {
                     </div>
 
                     {/* Venus */}
-                    <div className="bg-gray-800 p-3 rounded">
-                      <h4 className="text-sm font-medium text-yellow-400 mb-2">♀ Venus</h4>
+                    <div className="bg-white/5 border border-white/10 p-4 rounded-md">
+                      <h4 className="text-sm font-medium text-white mb-3 flex items-center gap-2"><span className="text-white/40">♀</span> Venus</h4>
                       <Slider
                         label="Orbit Distance"
                         value={values.venusOrbit}
@@ -240,8 +240,8 @@ const Playground = ({ isOpen, onClose }) => {
                     </div>
 
                     {/* Earth */}
-                    <div className="bg-gray-800 p-3 rounded">
-                      <h4 className="text-sm font-medium text-blue-400 mb-2">🌍 Earth</h4>
+                    <div className="bg-white/5 border border-white/10 p-4 rounded-md">
+                      <h4 className="text-sm font-medium text-white mb-3 flex items-center gap-2"><span className="text-white/40">♁</span> Earth</h4>
                       <Slider
                         label="Orbit Distance"
                         value={values.earthOrbit}
@@ -278,8 +278,8 @@ const Playground = ({ isOpen, onClose }) => {
                     </div>
 
                     {/* Mars */}
-                    <div className="bg-gray-800 p-3 rounded">
-                      <h4 className="text-sm font-medium text-red-400 mb-2">♂ Mars</h4>
+                    <div className="bg-white/5 border border-white/10 p-4 rounded-md">
+                      <h4 className="text-sm font-medium text-white mb-3 flex items-center gap-2"><span className="text-white/40">♂</span> Mars</h4>
                       <Slider
                         label="Orbit Distance"
                         value={values.marsOrbit}
@@ -321,8 +321,8 @@ const Playground = ({ isOpen, onClose }) => {
                 <Section title={<><Wind size={16} className="inline mr-2" />Gas Giants</>}>
                   <div className="space-y-4">
                     {/* Jupiter */}
-                    <div className="bg-gray-800 p-3 rounded">
-                      <h4 className="text-sm font-medium text-orange-300 mb-2">♃ Jupiter</h4>
+                    <div className="bg-white/5 border border-white/10 p-4 rounded-md">
+                      <h4 className="text-sm font-medium text-white mb-3 flex items-center gap-2"><span className="text-white/40">♃</span> Jupiter</h4>
                       <Slider
                         label="Orbit Distance"
                         value={values.jupiterOrbit}
@@ -359,8 +359,8 @@ const Playground = ({ isOpen, onClose }) => {
                     </div>
 
                     {/* Saturn */}
-                    <div className="bg-gray-800 p-3 rounded">
-                      <h4 className="text-sm font-medium text-yellow-300 mb-2">♄ Saturn</h4>
+                    <div className="bg-white/5 border border-white/10 p-4 rounded-md">
+                      <h4 className="text-sm font-medium text-white mb-3 flex items-center gap-2"><span className="text-white/40">♄</span> Saturn</h4>
                       <Slider
                         label="Orbit Distance"
                         value={values.saturnOrbit}
@@ -397,8 +397,8 @@ const Playground = ({ isOpen, onClose }) => {
                     </div>
 
                     {/* Uranus */}
-                    <div className="bg-gray-800 p-3 rounded">
-                      <h4 className="text-sm font-medium text-cyan-300 mb-2">⛢ Uranus</h4>
+                    <div className="bg-white/5 border border-white/10 p-4 rounded-md">
+                      <h4 className="text-sm font-medium text-white mb-3 flex items-center gap-2"><span className="text-white/40">⛢</span> Uranus</h4>
                       <Slider
                         label="Orbit Distance"
                         value={values.uranusOrbit}
@@ -435,8 +435,8 @@ const Playground = ({ isOpen, onClose }) => {
                     </div>
 
                     {/* Neptune */}
-                    <div className="bg-gray-800 p-3 rounded">
-                      <h4 className="text-sm font-medium text-blue-300 mb-2">♆ Neptune</h4>
+                    <div className="bg-white/5 border border-white/10 p-4 rounded-md">
+                      <h4 className="text-sm font-medium text-white mb-3 flex items-center gap-2"><span className="text-white/40">♆</span> Neptune</h4>
                       <Slider
                         label="Orbit Distance"
                         value={values.neptuneOrbit}
@@ -486,18 +486,20 @@ const Playground = ({ isOpen, onClose }) => {
           height: 16px;
           width: 16px;
           border-radius: 50%;
-          background: #22d3ee;
+          background: #ffffff;
           cursor: pointer;
-          border: 2px solid #0f172a;
+          border: 1.5px solid #27272a;
+          box-shadow: 0 2px 5px rgba(0,0,0,0.5);
         }
         
         .slider::-moz-range-thumb {
           height: 16px;
           width: 16px;
           border-radius: 50%;
-          background: #22d3ee;
+          background: #ffffff;
           cursor: pointer;
-          border: 2px solid #0f172a;
+          border: 1.5px solid #27272a;
+          box-shadow: 0 2px 5px rgba(0,0,0,0.5);
         }
       `}</style>
     </>
